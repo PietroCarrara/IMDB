@@ -2183,7 +2183,11 @@
 
 			#main > section.one {
 				background-color: #81918E;
-				background-image: url("../../images/banner.jpg");
+			}
+
+			#main > section.top.img {
+				background-image: url("../../assets/images/banner.jpg");
+				filter: blur(20px);
 			}
 
 			#main > section.two {
