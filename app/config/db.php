@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "";
-$password = "";
-$dbname = "";
+$username = "IMDB_USER";
+$password = "3T3Dp1uaNXAxbxWv";
+$dbname = "IMDB";
 
 $db = new mysqli($servername, $username, $password, $dbname);
 

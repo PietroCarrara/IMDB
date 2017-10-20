@@ -1,4 +1,3 @@
 <?php
-require 'vendor/Autoloader.php';
-Mustache_Autoloader::register();
+include '../../vendor/autoload.php';
 ?>
