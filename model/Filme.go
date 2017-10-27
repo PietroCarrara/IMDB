@@ -8,9 +8,10 @@ import (
 type Filme struct {
 	Traducoes []Traducao
 	Tags      []Tag
+	Sinopse   string
 
 	db *sql.DB
-	id int
+	Id int
 }
 
 // Comentarios retorna os comentarios deste filme
@@ -22,7 +23,7 @@ func (self *Filme) Comentarios() []*Comentario {
 
 	for _, u := range users {
 		for _, c := range u.Comentarios {
-			if c.Alvo.id == self.id {
+			if c.Alvo.Id == self.Id {
 				comentarios = append(comentarios, c)
 			}
 		}
@@ -37,7 +38,7 @@ func (self *Filme) Imagens() []Imagem {
 	var res []Imagem
 
 	for _, i := range imgs {
-		if i.Filme.id == self.id {
+		if i.Filme.Id == self.Id {
 			res = append(res, i)
 		}
 	}
@@ -71,29 +72,49 @@ func (self *Filme) Pessoas() []Pessoa {
 }
 
 func (self *Filme) Nota() float32 {
+	users := LoadAllUsers(self.db)
 
-	return 0
+	var soma, total float32
+
+	for _, user := range users {
+		for _, aval := range user.Avaliacoes {
+			if aval.Filme.Id == self.Id {
+				soma += aval.Nota
+				total++
+				break
+			}
+		}
+	}
+
+	// Evitar divisão por zero
+	if total < 1 {
+		total = 1
+	}
+
+	return soma / total
 }
 
-// LoadFilme carrega o filme de id informado
-func LoadFilme(db *sql.DB, id int) *Filme {
-	ps, err := db.Prepare("SELECT id FROM filme WHERE id = ?")
+// LoadFilme carrega o filme de Id informado
+func LoadFilme(db *sql.DB, Id int) *Filme {
+	ps, err := db.Prepare("SELECT Id, sinopse FROM filme WHERE Id = ?")
 	defer ps.Close()
 	if err != nil {
-		log.Printf("Erro ao preparar o PS em 'LoadFilme(db, %d)': %s", id, err.Error())
+		log.Printf("Erro ao preparar o PS em 'LoadFilme(db, %d)': %s", Id, err.Error())
 		return nil
 	}
 
-	res, err := ps.Query(id)
+	res, err := ps.Query(Id)
 	defer res.Close()
 	if err != nil {
-		log.Print("Erro ao executar o PS em 'LoadFilme(db, %d)': %s", id, err.Error())
+		log.Print("Erro ao executar o PS em 'LoadFilme(db, %d)': %s", Id, err.Error())
 		return nil
 	}
 
 	if res.Next() {
 
-		filme := Filme{id: id}
+		var filme Filme
+
+		res.Scan(&filme.Id, &filme.Sinopse)
 
 		filme.db = db
 
@@ -104,4 +125,33 @@ func LoadFilme(db *sql.DB, id int) *Filme {
 	}
 
 	return nil
+}
+
+// LoadFilme carrega o filme de Id informado
+func LoadAllFilmes(db *sql.DB) []*Filme {
+
+	res, err := db.Query("SELECT Id, sinopse FROM filme")
+	defer res.Close()
+	if err != nil {
+		log.Print("Erro ao executar o PS em 'LoadFilme(db)': %s", err.Error())
+		return nil
+	}
+
+	var filmes []*Filme
+
+	for res.Next() {
+
+		var filme Filme
+
+		res.Scan(&filme.Id, &filme.Sinopse)
+
+		filme.db = db
+
+		filme.Traducoes = LoadTraducoesByFilme(db, filme)
+		filme.Tags = LoadTagsByFilme(db, filme)
+
+		filmes = append(filmes, &filme)
+	}
+
+	return filmes
 }

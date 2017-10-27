@@ -25,7 +25,7 @@ func LoadTraducoesByFilme(db *sql.DB, f Filme) []Traducao {
 		return nil
 	}
 
-	res, err := ps.Query(f.id)
+	res, err := ps.Query(f.Id)
 	defer res.Close()
 	if err != nil {
 		log.Printf("Erro ao executar o PS em 'LoadTraducoesByFilme(db, %v)': %s", f, err.Error())

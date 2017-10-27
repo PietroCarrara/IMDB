@@ -35,7 +35,7 @@ func LoadTagsByFilme(db *sql.DB, f Filme) []Tag {
 		log.Printf("Erro ao preparar o PS em 'LoadTagsByFilme(db, %v)': %s", f, err.Error())
 	}
 
-	res, err := ps.Query(f.id)
+	res, err := ps.Query(f.Id)
 	defer res.Close()
 	if err != nil {
 		log.Printf("Erro ao executar o PS em 'LoadTagsByFilme(db, %v)': %s", f, err.Error())

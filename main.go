@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -35,27 +34,28 @@ func main() {
 		log.Print("Erro ao abrir a conexão com o banco em 'main()': " + err.Error())
 	}
 
-	/*os.Mkdir(backendfile, 0755)
-	defer os.Remove(backendfile)
+	/*
+		os.Mkdir(backendfile, 0755)
+		defer os.Remove(backendfile)
 
-	// create the backend
-	backend, err = httpauth.NewLeveldbAuthBackend(backendfile)
-	if err != nil {
-		panic(err)
-	}
+		// create the backend
+		backend, err = httpauth.NewLeveldbAuthBackend(backendfile)
+		if err != nil {
+			panic(err)
+		}
 
-	// create a default user
-	username := "admin"
-	defaultUser := httpauth.UserData{Username: username}
-	err = backend.SaveUser(defaultUser)
-	if err != nil {
-		panic(err)
-	}
-	// Update user with a password and email address
-	err = aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
-	if err != nil {
-		panic(err)
-	}
+		// create a default user
+		username := "admin"
+		defaultUser := httpauth.UserData{Username: username}
+		err = backend.SaveUser(defaultUser)
+		if err != nil {
+			panic(err)
+		}
+		// Update user with a password and email address
+		err = aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
+		if err != nil {
+			panic(err)
+		}
 	*/
 
 	// set up routers and route handlers
@@ -72,13 +72,16 @@ func main() {
 }
 
 func getRoot(w http.ResponseWriter, r *http.Request) {
-	bytes, err := ioutil.ReadFile("app/view/index.html")
+
+	obj := model.LoadAllFilmes(db)
+
+	str, err := mustache.RenderFile("./app/view/index.html", obj)
 	if err != nil {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-	w.Write(bytes)
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(str))
 }
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
@@ -96,6 +99,7 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(sla))
 }
 
@@ -108,5 +112,6 @@ func test(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(sla))
 }
