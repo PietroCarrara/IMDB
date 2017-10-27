@@ -9,7 +9,7 @@ type Imagem struct {
 	Caminho string
 	Filme   *Filme
 
-	id int
+	Id int
 	db *sql.DB
 }
 
@@ -28,7 +28,7 @@ func LoadAllImagens(db *sql.DB) []Imagem {
 
 		i.db = db
 
-		res.Scan(&i.id, &i.Caminho, &idFilme)
+		res.Scan(&i.Id, &i.Caminho, &idFilme)
 
 		i.Filme = LoadFilme(db, idFilme)
 
@@ -56,7 +56,7 @@ func LoadImagem(db *sql.DB, id int) *Imagem {
 		var idFilme int
 
 		i.db = db
-		i.id = id
+		i.Id = id
 
 		res.Scan(&i.Caminho, &idFilme)
 
@@ -75,7 +75,7 @@ func (self *Imagem) Pessoas() []Pessoa {
 
 	for _, p := range pessoas {
 		for _, i := range p.Imagens {
-			if i.id == self.id {
+			if i.Id == self.Id {
 				res = append(res, p)
 				break
 			}

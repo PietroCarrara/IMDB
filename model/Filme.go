@@ -45,12 +45,34 @@ func (self *Filme) Imagens() []Imagem {
 	return res
 }
 
+func (self *Filme) Banner() Imagem {
+	imgs := self.Imagens()
+
+	var i int
+
+	menor := imgs[0].Id
+
+	for index, val := range imgs[1:] {
+		if val.Id < menor {
+			i = index
+			menor = val.Id
+		}
+	}
+
+	return imgs[i]
+}
+
 func (self *Filme) Name() string {
 	return self.Traducoes[Brasil].Titulo
 }
 
 func (self *Filme) Pessoas() []Pessoa {
 	return nil
+}
+
+func (self *Filme) Nota() float32 {
+
+	return 0
 }
 
 // LoadFilme carrega o filme de id informado

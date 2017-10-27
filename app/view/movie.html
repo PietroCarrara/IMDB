@@ -86,19 +86,19 @@
 
         <div class="card card-outline-secondary my-4">
           <div class="card-header">
-            Movie Reviews
+            Comentários do Filme
           </div>
           <div class="card-body">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            
+            <!-- Percorra o vetor de comentários --> 
+            {{ #Comentarios }}
+            <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
+            <p> {{ Conteudo }} </p>
+            <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
+            <small class="text-muted"> Postado por {{ Usuario.Nome }}</small>
             <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-            <hr>
-            <a href="#" class="btn btn-success">Leave a Review</a>
+            <!-- Feche o loop -->
+            {{ /Comentarios }}
           </div>
         </div>
         <!-- /.card -->

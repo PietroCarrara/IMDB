@@ -3,21 +3,24 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"strconv"
 
+	"github.com/apexskier/httpauth"
 	"github.com/cbroglie/mustache"
+	"github.com/gorilla/mux"
 	"gitlab.com/rosso_pietro/IMDB/model"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
-	/*
-		backend     httpauth.LeveldbAuthBackend
-		aaa         httpauth.Authorizer
-		port        = 8009
-		backendfile = "auth.leveldb"
-	*/
+	backend     httpauth.LeveldbAuthBackend
+	aaa         httpauth.Authorizer
+	port        = 8009
+	backendfile = "auth.leveldb"
 
 	db *sql.DB
 )
@@ -32,50 +35,65 @@ func main() {
 		log.Print("Erro ao abrir a conexão com o banco em 'main()': " + err.Error())
 	}
 
-	o := model.LoadFilme(db, 2)
+	/*os.Mkdir(backendfile, 0755)
+	defer os.Remove(backendfile)
 
-	sla, err := mustache.RenderFile("app/view/movie.html", o)
+	// create the backend
+	backend, err = httpauth.NewLeveldbAuthBackend(backendfile)
 	if err != nil {
-		// fmt.Printf("%s", err.Error())
+		panic(err)
 	}
 
-	fmt.Println(sla)
+	// create a default user
+	username := "admin"
+	defaultUser := httpauth.UserData{Username: username}
+	err = backend.SaveUser(defaultUser)
+	if err != nil {
+		panic(err)
+	}
+	// Update user with a password and email address
+	err = aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
+	if err != nil {
+		panic(err)
+	}
+	*/
 
-	/*
-	   	var err error
-	   	os.Mkdir(backendfile, 0755)
-	   	defer os.Remove(backendfile)
+	// set up routers and route handlers
+	r := mux.NewRouter()
 
-	   	// create the backend
-	   	backend, err = httpauth.NewLeveldbAuthBackend(backendfile)
-	   	if err != nil {
-	   		panic(err)
-	   	}
+	r.HandleFunc("/", getRoot).Methods("GET")
+	r.HandleFunc("/movie/{id}", getMovie).Methods("GET")
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/view/")))
 
-	   	// create a default user
-	   	username := "admin"
-	   	defaultUser := httpauth.UserData{Username: username}
-	   	err = backend.SaveUser(defaultUser)
-	   	if err != nil {
-	   		panic(err)
-	   	}
-	   	// Update user with a password and email address
-	   	err = aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
-	   	if err != nil {
-	   		panic(err)
-	   	}
+	http.Handle("/", r)
+	fmt.Printf("Server running on port %d\n", port)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+}
 
-	   	// set up routers and route handlers
-	   	r := mux.NewRouter()
+func getRoot(w http.ResponseWriter, r *http.Request) {
+	bytes, err := ioutil.ReadFile("app/view/index.html")
+	if err != nil {
+		return
+	}
 
-	   	r.HandleFunc("/", getRoot).Methods("GET")
+	w.Header().Set("Content-Type", "text/html")
+	w.Write(bytes)
+}
 
-	   	http.Handle("/", r)
-	   	fmt.Printf("Server running on port %d\n", port)
-	   	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-	   }
+func getMovie(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
-	   func getRoot(w http.ResponseWriter, r *http.Request) {
-	   	//*/
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return
+	}
 
+	filme := model.LoadFilme(db, id)
+
+	sla, err := mustache.RenderFile("app/view/movie.html", filme)
+	if err != nil {
+		return
+	}
+
+	w.Write([]byte(sla))
 }

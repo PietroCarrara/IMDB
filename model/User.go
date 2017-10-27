@@ -146,14 +146,14 @@ func (self *User) loadComentarios(db *sql.DB) {
 	ps, err := db.Prepare("SELECT id_filme, texto FROM usuario_filme_review WHERE id_usuario = ?")
 	defer ps.Close()
 	if err != nil {
-		log.Printf("Erro ao preparar o PS em 'LoadComentariosByFilme(db, %v)': %s", self, err.Error())
+		log.Printf("Erro ao preparar o PS em 'loadComentarios(db, %v)': %s", self, err.Error())
 		return
 	}
 
 	res, err := ps.Query(self.id)
 	defer res.Close()
 	if err != nil {
-		log.Printf("Erro ao executar o PS em 'LoadComentariosByFilme(db, %v)': %s", self, err)
+		log.Printf("Erro ao executar o PS em 'oadComentarios(db, %v)': %s", self, err)
 		return
 	}
 
