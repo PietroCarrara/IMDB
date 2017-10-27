@@ -8,13 +8,12 @@ import (
 )
 
 type User struct {
-	Nome      string
-	senha     string
-	IsAdmin   bool
-	Watchlist []*Filme
-	// Mapa que recebe o ID do filme e retorna a nota
-	Avaliacoes  map[int]float32
-	Comentarios []Comentario
+	Nome        string
+	senha       string
+	IsAdmin     bool
+	Watchlist   []*Filme
+	Avaliacoes  []*Avaliacao
+	Comentarios []*Comentario
 	UserData    httpauth.UserData
 
 	id int
@@ -26,6 +25,11 @@ type Comentario struct {
 	Alvo     *Filme
 	Usuario  *User
 	Conteudo string
+}
+
+type Avaliacao struct {
+	Filme *Filme
+	Nota  float32
 }
 
 func LoadAllUsers(db *sql.DB) []User {
@@ -117,6 +121,7 @@ func LoadUserByID(db *sql.DB, u int) *User {
 func (self *User) load(db *sql.DB) {
 	self.loadWatchlist(db)
 	self.loadComentarios(db)
+	self.loadAvaliacoes(db)
 }
 
 func (self *User) loadWatchlist(db *sql.DB) {
@@ -169,6 +174,36 @@ func (self *User) loadComentarios(db *sql.DB) {
 		c.Alvo = LoadFilme(db, id)
 		c.Usuario = self
 
-		self.Comentarios = append(self.Comentarios, c)
+		self.Comentarios = append(self.Comentarios, &c)
+	}
+}
+
+func (self *User) loadAvaliacoes(db *sql.DB) {
+	ps, err := db.Prepare("SELECT id_filme, nota FROM usuario_filme_nota WHERE id_usuario = ?")
+	defer ps.Close()
+	if err != nil {
+		log.Printf("Erro ao preparar o PS em 'loadAvaliacoes(db)': %s", err.Error())
+		return
+	}
+
+	res, err := ps.Query(self.id)
+	defer res.Close()
+	if err != nil {
+		log.Printf("Erro ao executar o PS em 'loadAvaliacoes(db)': %s", err)
+		return
+	}
+
+	for res.Next() {
+
+		var (
+			nota float32
+			id   int
+		)
+
+		res.Scan(&id, &nota)
+
+		a := Avaliacao{Nota: nota, Filme: LoadFilme(db, id)}
+
+		self.Avaliacoes = append(self.Avaliacoes, &a)
 	}
 }

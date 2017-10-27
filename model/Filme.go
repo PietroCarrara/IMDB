@@ -14,11 +14,11 @@ type Filme struct {
 }
 
 // Comentarios retorna os comentarios deste filme
-func (self *Filme) Comentarios() []Comentario {
+func (self *Filme) Comentarios() []*Comentario {
 
 	users := LoadAllUsers(self.db)
 
-	var comentarios []Comentario
+	var comentarios []*Comentario
 
 	for _, u := range users {
 		for _, c := range u.Comentarios {
