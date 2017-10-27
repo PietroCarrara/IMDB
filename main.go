@@ -34,16 +34,9 @@ func main() {
 
 	o := model.LoadFilme(db, 2)
 
-	for _, obj := range o.Imagens() {
-		for _, p := range obj.Pessoas() {
-			fmt.Print(p.Nome + " ")
-		}
-		fmt.Println()
-	}
-
-	sla, err := fmt.Print(mustache.RenderFile("app/view/index.html"))
+	sla, err := mustache.RenderFile("app/view/movie.html", o)
 	if err != nil {
-		fmt.Printf("%s", err.Error())
+		// fmt.Printf("%s", err.Error())
 	}
 
 	fmt.Println(sla)

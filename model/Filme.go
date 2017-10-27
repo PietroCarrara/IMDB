@@ -45,6 +45,10 @@ func (self *Filme) Imagens() []Imagem {
 	return res
 }
 
+func (self *Filme) Name() string {
+	return self.Traducoes[Brasil].Titulo
+}
+
 func (self *Filme) Pessoas() []Pessoa {
 	return nil
 }
