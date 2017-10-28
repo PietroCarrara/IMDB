@@ -118,10 +118,22 @@ func LoadUserByID(db *sql.DB, u int) *User {
 	return nil
 }
 
+func (self *User) UpdateAuth(auth *httpauth.Authorizer) {
+	auth.Update(nil, nil, self.Nome, self.senha, "NONE")
+}
+
 func (self *User) load(db *sql.DB) {
 	self.loadWatchlist(db)
 	self.loadComentarios(db)
 	self.loadAvaliacoes(db)
+
+	self.UserData.Username = self.Nome
+
+	if self.IsAdmin {
+		self.UserData.Role = "admin"
+	} else {
+		self.UserData.Role = "user"
+	}
 }
 
 func (self *User) loadWatchlist(db *sql.DB) {

@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/apexskier/httpauth"
 	"github.com/cbroglie/mustache"
@@ -18,6 +20,7 @@ import (
 var (
 	backend     httpauth.LeveldbAuthBackend
 	aaa         httpauth.Authorizer
+	roles       map[string]httpauth.Role
 	port        = 8009
 	backendfile = "auth.leveldb"
 
@@ -34,29 +37,40 @@ func main() {
 		log.Print("Erro ao abrir a conexão com o banco em 'main()': " + err.Error())
 	}
 
-	/*
-		os.Mkdir(backendfile, 0755)
-		defer os.Remove(backendfile)
+	os.Mkdir(backendfile, 0755)
+	defer os.Remove(backendfile)
 
-		// create the backend
-		backend, err = httpauth.NewLeveldbAuthBackend(backendfile)
+	// create the backend
+	backend, err = httpauth.NewLeveldbAuthBackend(backendfile)
+	if err != nil {
+		panic(err)
+	}
+
+	// create some default roles
+	roles = make(map[string]httpauth.Role)
+	roles["user"] = 30
+	roles["admin"] = 80
+	aaa, err = httpauth.NewAuthorizer(backend, []byte("cookie-encryption-key"), "user", roles)
+
+	// create a default user
+	username := "root"
+	defaultUser := httpauth.UserData{Username: username, Role: "admin"}
+	err = backend.SaveUser(defaultUser)
+	if err != nil {
+		panic(err)
+	}
+
+	// Update user with a password and email address
+	aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
+
+	for _, user := range model.LoadAllUsers(db) {
+		err = backend.SaveUser(user.UserData)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
-		// create a default user
-		username := "admin"
-		defaultUser := httpauth.UserData{Username: username}
-		err = backend.SaveUser(defaultUser)
-		if err != nil {
-			panic(err)
-		}
-		// Update user with a password and email address
-		err = aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
-		if err != nil {
-			panic(err)
-		}
-	*/
+		user.UpdateAuth(&aaa)
+	}
 
 	// set up routers and route handlers
 	r := mux.NewRouter()
@@ -64,6 +78,8 @@ func main() {
 	r.HandleFunc("/", getRoot).Methods("GET")
 	r.HandleFunc("/movie/{id}", getMovie).Methods("GET")
 	r.HandleFunc("/test", test).Methods("GET")
+	r.HandleFunc("/login", getLogin).Methods("GET")
+	r.HandleFunc("/login", postLogin).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/view/")))
 
 	http.Handle("/", r)
@@ -75,7 +91,19 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 
 	obj := model.LoadAllFilmes(db)
 
-	str, err := mustache.RenderFile("./app/view/index.html", obj)
+	var user *model.User
+
+	logged := map[string]bool{}
+
+	data, err := aaa.CurrentUser(w, r)
+	if err != nil {
+		logged["logged"] = false
+	} else {
+		user = model.LoadUserByName(db, data.Username)
+		logged["logged"] = true
+	}
+
+	str, err := mustache.RenderFile("./app/view/index.html", obj, user, logged)
 	if err != nil {
 		return
 	}
@@ -101,6 +129,39 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(sla))
+}
+
+func getLogin(w http.ResponseWriter, r *http.Request) {
+
+	sla, err := mustache.RenderFile("app/view/login.html", nil)
+	if err != nil {
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(sla))
+}
+
+func getLoginWithErros(w http.ResponseWriter, r *http.Request, erros ...string) {
+
+	sla, err := mustache.RenderFile("app/view/login.html", erros)
+	if err != nil {
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(sla))
+}
+
+func postLogin(rw http.ResponseWriter, req *http.Request) {
+	username := req.PostFormValue("username")
+	password := req.PostFormValue("password")
+	if err := aaa.Login(rw, req, username, password, "/"); err == nil || (err != nil && strings.Contains(err.Error(), "already authenticated")) {
+		getLoginWithErros(rw, req, "Você já se autenticou!")
+	} else if err != nil {
+		fmt.Println(err)
+		getLoginWithErros(rw, req, "Usuário/Senha incorretos!")
+	}
 }
 
 func test(w http.ResponseWriter, r *http.Request) {
