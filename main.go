@@ -78,6 +78,7 @@ func main() {
 	r.HandleFunc("/", getRoot).Methods("GET")
 	r.HandleFunc("/movie/{id}", getMovie).Methods("GET")
 	r.HandleFunc("/test", test).Methods("GET")
+	r.HandleFunc("/user/{user}", getUser).Methods("GET")
 	r.HandleFunc("/login", getLogin).Methods("GET")
 	r.HandleFunc("/login", postLogin).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/view/")))
@@ -123,6 +124,23 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 	filme := model.LoadFilme(db, id)
 
 	sla, err := mustache.RenderFile("app/view/movie.html", filme)
+	if err != nil {
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(sla))
+}
+
+func getUser(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	nome := vars["user"]
+
+	user := model.LoadUserByName(db, nome)
+
+	sla, err := mustache.RenderFile("app/view/user.html", user)
 	if err != nil {
 		return
 	}

@@ -126,7 +126,6 @@ func (self *User) load(db *sql.DB) {
 	self.loadWatchlist(db)
 	self.loadComentarios(db)
 	self.loadAvaliacoes(db)
-
 	self.UserData.Username = self.Nome
 
 	if self.IsAdmin {
