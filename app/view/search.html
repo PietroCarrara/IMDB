@@ -9,10 +9,10 @@
   <title>IMDb - Resultados da pesquisa</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="/css/thumbnail-gallery.css" rel="stylesheet">
+  <link href="css/thumbnail-gallery.css" rel="stylesheet">
 
 </head>
 
@@ -31,13 +31,13 @@
             <a class="nav-link" href="/index.html">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/news.html">Notícias</a>
+            <a class="nav-link" href="/search.html">Notícias</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/inTheaters.html">Nos cinemas</a>
+            <a class="nav-link" href="/search.html">Nos cinemas</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/commingSoon.html">Em breve</a>
+            <a class="nav-link" href="/search.html">Em breve</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/login.html">Sign In/Sign Up</a>
@@ -64,9 +64,11 @@
               <input type="image" src="img/busca.png">
             </form>
           </section>
-          <a href="#" class="list-group-item">Todos os filmes</a>
-          <a href="#" class="list-group-item">Melhores avaliados</a>
-          <a href="#" class="list-group-item">Mais comentados</a>
+          {{#.}}
+
+          <a href="/tags/{{.}}" class="list-group-item">{{#tags}}</a> <!-- mano, não faço ideia como vamos fazer isso -->
+
+          {{/.}}
         </div>
       </div>
 
@@ -77,64 +79,26 @@
         <div class="row text-center text-lg-left">
 
           <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
-          </div>
-          <div class="col-lg-9 col-md-4 col-xs-6">
-            <a href="#" class="d-block mb-4 h-100">
-              <img class="img-fluid img-thumbnail" src="http://placehold.it/400x300" alt="">
-            </a>
+
+            {{#.}}
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                  <a href="/movie/{{ Id }}"><img class="card-img-top" src="{{ Banner.Caminho }}" alt=""></a>
+                  <div class="card-body">
+                    <h4 class="card-title">
+                      <a href="/movie/{{ Id }}"> {{ Name }} </a>
+                    </h4>
+                    <p class="card-text">{{ Sinopse }}</p>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734; ({{ Nota }} Estrelas) </small>
+                  </div>
+                </div>
+              </div>
+
+              {{/.}}
+
           </div>
         </div>
       </div>
@@ -150,8 +114,8 @@
     </footer>
 
     <!-- Bootstrap core JavaScript -->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   </body>
 
