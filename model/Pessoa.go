@@ -9,8 +9,8 @@ import (
 )
 
 type Pessoa struct {
-	Filmes     []Filme
-	Imagens    []Imagem
+	Filmes     []*Filme
+	Imagens    []*Imagem
 	Nome       string
 	Nascimento time.Time
 	id         int
@@ -103,7 +103,7 @@ func (self *Pessoa) loadFilmes(db *sql.DB) {
 
 		f := *LoadFilme(db, id)
 
-		self.Filmes = append(self.Filmes, f)
+		self.Filmes = append(self.Filmes, &f)
 	}
 }
 
@@ -127,6 +127,6 @@ func (self *Pessoa) loadImagens(db *sql.DB) {
 
 		f := *LoadImagem(db, id)
 
-		self.Imagens = append(self.Imagens, f)
+		self.Imagens = append(self.Imagens, &f)
 	}
 }

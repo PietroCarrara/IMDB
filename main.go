@@ -77,8 +77,8 @@ func main() {
 
 	r.HandleFunc("/", getRoot).Methods("GET")
 	r.HandleFunc("/movie/{id}", getMovie).Methods("GET")
-	r.HandleFunc("/test", test).Methods("GET")
 	r.HandleFunc("/user/{user}", getUser).Methods("GET")
+	r.HandleFunc("/pessoa/{id}", getPessoa).Methods("GET")
 	r.HandleFunc("/login", getLogin).Methods("GET")
 	r.HandleFunc("/login", postLogin).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/view/")))
@@ -160,6 +160,26 @@ func getLogin(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(sla))
 }
 
+func getPessoa(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	i, _ := strconv.Atoi(vars["id"])
+
+	p := model.LoadPessoaByID(db, i)
+
+	fmt.Print(p.Filmes)
+
+	page, err := mustache.RenderFile("app/view/pessoa.html", p)
+	if err != nil {
+		print(err)
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(page))
+}
+
 func getLoginWithErros(w http.ResponseWriter, r *http.Request, erros ...string) {
 
 	sla, err := mustache.RenderFile("app/view/login.html", erros)
@@ -180,17 +200,4 @@ func postLogin(rw http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		getLoginWithErros(rw, req, "Usuário/Senha incorretos!")
 	}
-}
-
-func test(w http.ResponseWriter, r *http.Request) {
-
-	obj := model.LoadUserByName(db, "pietro")
-
-	sla, err := mustache.RenderFile("app/view/test.html", obj)
-	if err != nil {
-		return
-	}
-
-	w.Header().Set("Content-type", "text/html")
-	w.Write([]byte(sla))
 }
