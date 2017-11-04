@@ -6,7 +6,7 @@ import "log"
 type Tag int
 
 const (
-	Terror Tag = iota
+	Terror Tag = iota + 1
 	SciFi
 	Acao
 	Animacao
@@ -19,9 +19,9 @@ func (self Tag) String() string {
 	case SciFi:
 		return "Ficção Científica"
 	case Acao:
-		return "Acao"
+		return "Ação"
 	case Animacao:
-		return "Animacao"
+		return "Animação"
 	default:
 		return "Null"
 	}
