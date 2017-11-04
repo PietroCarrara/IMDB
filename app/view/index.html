@@ -42,22 +42,23 @@
             <a class="nav-link" href="/movies/em-breve">Em breve</a>
           </li>
           <li class="nav-item">
-              <!-- Logado -->
-              {{ #logged }} 
-              <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
-              {{ /logged }}
-              <!-- Não Logado -->
-              {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
+            <!-- Logado -->
+            {{ #logged }}
+            <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+            {{ /logged }}
+            <!-- Não Logado -->
+            {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
           </li>
           <li class="nav-item">
             {{ #logged }}
-              <a class="nav-link" href="/logout"> Logout </a>
+            <a class="nav-link" href="/logout"> Logout </a>
             {{ /logged }}
           </li>
         </ul>
       </div>
     </div>
   </nav>
+  <!-- End Navigation -->
 
   <!-- Page Content -->
   <div class="container">
