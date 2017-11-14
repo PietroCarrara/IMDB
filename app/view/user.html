@@ -77,11 +77,6 @@
               <input type="image" src="img/busca.png">
             </form>
           </section>
-          {{#.}}
-
-          <a href="/tags/{{.}}" class="list-group-item">{{#tags}}</a> <!-- mano, não faço ideia como vamos fazer isso -->
-
-          {{/.}}
         </div>
       </div>
 
@@ -112,7 +107,7 @@
 
                       <li>
                           <!-- Não Botei a imagem direto pq ficava gigante -->
-                          {{ Nome }} em {{ Alvo.Name }}> {{ Conteudo }}
+                          {{ Alvo.Name }}> {{ Conteudo }}
                       </li>
 
                   {{ /Comentarios }}

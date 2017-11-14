@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -77,15 +79,27 @@ func main() {
 
 	r.HandleFunc("/", getRoot).Methods("GET")
 	r.HandleFunc("/movie/{id}", getMovie).Methods("GET")
+	r.HandleFunc("/movie/{id}/comentar", postComentario).Methods("POST")
 	r.HandleFunc("/user/{user}", getUser).Methods("GET")
 	r.HandleFunc("/pessoa/{id}", getPessoa).Methods("GET")
 	r.HandleFunc("/login", getLogin).Methods("GET")
 	r.HandleFunc("/login", postLogin).Methods("POST")
+	r.HandleFunc("/logout", getLogout).Methods("GET")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/view/")))
 
 	http.Handle("/", r)
 	fmt.Printf("Server running on port %d\n", port)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+}
+
+func CurrentUser(w http.ResponseWriter, r *http.Request) *model.User {
+
+	data, err := aaa.CurrentUser(w, r)
+	if err == nil {
+		return model.LoadUserByName(db, data.Username)
+	}
+
+	return nil
 }
 
 func getRoot(w http.ResponseWriter, r *http.Request) {
@@ -96,11 +110,8 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 
 	logged := map[string]bool{}
 
-	data, err := aaa.CurrentUser(w, r)
-	if err != nil {
-		logged["logged"] = false
-	} else {
-		user = model.LoadUserByName(db, data.Username)
+	user = CurrentUser(w, r)
+	if user != nil {
 		logged["logged"] = true
 	}
 
@@ -125,6 +136,7 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 
 	sla, err := mustache.RenderFile("app/view/movie.html", filme)
 	if err != nil {
+		log.Print(err)
 		return
 	}
 
@@ -158,6 +170,16 @@ func getLogin(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(sla))
+}
+
+func getLogout(w http.ResponseWriter, r *http.Request) {
+
+	if err := aaa.Logout(w, r); err != nil {
+		fmt.Println(err)
+		// this shouldn't happen
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func getPessoa(w http.ResponseWriter, r *http.Request) {
@@ -200,4 +222,37 @@ func postLogin(rw http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		getLoginWithErros(rw, req, "Usuário/Senha incorretos!")
 	}
+}
+
+func postComentario(w http.ResponseWriter, r *http.Request) {
+
+	type comentario struct {
+		Conteudo string
+		Autor    string
+	}
+
+	user := CurrentUser(w, r)
+	if user == nil {
+		return
+	}
+
+	bytes, _ := ioutil.ReadAll(r.Body)
+	text := string(bytes)
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return
+	}
+
+	filme := model.LoadFilme(db, id)
+
+	user.ComentarioAdd(filme, text, db)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+
+	c := comentario{Autor: user.Nome, Conteudo: text}
+
+	json.NewEncoder(w).Encode(c)
 }

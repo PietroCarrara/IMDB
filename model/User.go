@@ -16,7 +16,8 @@ type User struct {
 	Comentarios []*Comentario
 	UserData    httpauth.UserData
 
-	id int
+	id     int
+	exists bool
 }
 
 // Comentario representa um comentário do site
@@ -122,7 +123,42 @@ func (self *User) UpdateAuth(auth *httpauth.Authorizer) {
 	auth.Update(nil, nil, self.Nome, self.senha, "NONE")
 }
 
+func (self *User) WatchListAdd(f *Filme, db *sql.DB) {
+
+	ps, err := db.Prepare("INSERT INTO usuario_filme_lista (id_filme, id_usuario) VALUES (?, ?)")
+	if err != nil {
+		log.Printf("Erro ao preparar o ps em User.WatchListAdd(*Filme, *sql.DB): %s", err.Error())
+	}
+	defer ps.Close()
+
+	_, err = ps.Exec(f.Id, self.id)
+	if err != nil {
+		log.Printf("Erro ao executar o ps em User.WatchListAdd(*Filme, *sql.DB): %s", err.Error())
+	}
+
+	self.Watchlist = append(self.Watchlist, f)
+}
+
+func (self *User) ComentarioAdd(f *Filme, text string, db *sql.DB) {
+
+	ps, err := db.Prepare("INSERT INTO usuario_filme_review (id_filme, id_usuario, texto) VALUES (?, ?, ?)")
+	if err != nil {
+		log.Printf("Erro ao preparar o ps em User.ComentarioAdd(*Filme, string, *sql.DB): %s", err.Error())
+	}
+	defer ps.Close()
+
+	_, err = ps.Exec(f.Id, self.id, text)
+	if err != nil {
+		log.Printf("Erro ao executar o ps em User.ComentarioAdd(*Filme, string, *sql.DB): %s", err.Error())
+	}
+
+	self.Comentarios = append(self.Comentarios, &Comentario{Alvo: f, Usuario: self, Conteudo: text})
+}
+
 func (self *User) load(db *sql.DB) {
+
+	self.exists = true
+
 	self.loadWatchlist(db)
 	self.loadComentarios(db)
 	self.loadAvaliacoes(db)

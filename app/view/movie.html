@@ -77,11 +77,11 @@
               <input type="image" src="/img/busca.png">
             </form>
           </section>
-          {{#.}}
+          {{#Tags}}
 
-          <a href="/tags/{{.}}" class="list-group-item">{{#tags}}</a> <!-- mano, não faço ideia como vamos fazer isso -->
+          <a href="/tags/{{.}}" class="list-group-item">{{.}}</a> <!-- mano, não faço ideia como vamos fazer isso -->
 
-          {{/.}}
+          {{/Tags}}
         </div>
       </div>
       <!-- /.col-lg-3 -->
@@ -102,7 +102,7 @@
           <div class="card-header">
             Comentários do Filme
           </div>
-          <div class="card-body">
+          <div class="card-body" id="comment-box" >
 
             <!-- Percorra o vetor de comentários -->
             {{ #Comentarios }}
@@ -114,6 +114,11 @@
             <!-- Feche o loop -->
             {{ /Comentarios }}
           </div>
+
+          <form id="comentario">
+            <input type="text" name="conteudo" id="com" />
+            <span onclick="comentar();">Comentar</span>
+          </form>
         </div>
         <!-- /.card -->
 
@@ -134,17 +139,18 @@
     <!-- /.container -->
   </footer>
 
-
-  <script>
-  function comentar () {$.post( "/comentar", $( "#comentario" ).serialize())
-      .done(function( data ) {
-        alert( "Data Loaded: " + data );
-      });}
-  </script>
-
   <!-- Bootstrap core JavaScript -->
   <script src="/vendor/jquery/jquery.min.js"></script>
   <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+      function comentar () {
+        $.post( "/movie/{{Id}}/comentar", $( "#com" ).val())
+          .done(function( comentario ) {
+            $("#comment-box").append('<p>' + comentario.Conteudo + '</p><small class="text-muted"> Postado por ' + comentario.Autor + '</small><hr>')
+          });
+      }
+      </script>
 
 </body>
 
