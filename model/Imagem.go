@@ -4,8 +4,8 @@ package model
 // ou poster de um filme
 type Imagem struct {
 	Caminho string
-	FilmeID uint
 	Pessoas []Pessoa `gorm:"many2many:pessoa_imagem"`
 
-	ID uint
+	FilmeID uint
+	ID      uint
 }

@@ -222,8 +222,11 @@ func busca(w http.ResponseWriter, r *http.Request) {
 }
 
 func pessoa(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	//id, err := strconv.ParseUint(vars["id"], 10, 0)
+	vars := mux.Vars(r)
+	id, _ := strconv.ParseUint(vars["id"], 10, 0)
+
+	pessoa := model.Pessoa{ID: uint(id)}
+	db.First(&pessoa)
 }
 
 func tag(w http.ResponseWriter, r *http.Request) {

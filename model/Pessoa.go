@@ -8,8 +8,8 @@ import (
 // (atores, diretores, etc...)
 type Pessoa struct {
 	Nascimento    time.Time
-	Imagens       []Imagem       `gorm:"many2many:pessoa_imagem"`
-	Participacoes []Participante `gorm:"many2many:pessoa_filme"`
+	Imagens       []Imagem `gorm:"many2many:pessoa_imagem"`
+	Participacoes []Participante
 
 	ID uint
 }

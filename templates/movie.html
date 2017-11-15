@@ -186,7 +186,7 @@
         $.post("/movie/{{ID}}/comment", $("#com").val())
           .done(function (comentario) {
             $("#comment-box")
-              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por <a href="/user/{{Usuario.Nome}}">{{ Nome }}</a> </small><hr>');
+              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por <a href="/user/{{Nome}}">{{ Nome }}</a> </small><hr>');
             
             $('#com').val('');
           });
