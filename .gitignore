@@ -1,3 +1,4 @@
 auth.leveldb/
 IMDB
 static/uploads/
+.idea/
