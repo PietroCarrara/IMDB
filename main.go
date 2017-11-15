@@ -252,7 +252,7 @@ func insFilme(w http.ResponseWriter, r *http.Request) {
 
 	pic, _, err := r.FormFile("pic")
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
 	foto := model.Imagem{FilmeID: filme.ID}
 
@@ -262,18 +262,16 @@ func insFilme(w http.ResponseWriter, r *http.Request) {
 
 	file, err := os.Create("./static" + name)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
 
-	if pic == nil {
-		fmt.Print("deu ruim")
-	}
 	_, err = io.Copy(file, pic)
-	fmt.Println("sla")
 
 	foto.Caminho = name
 
 	db.Save(&foto)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func loginPage(w http.ResponseWriter, r *http.Request) {
