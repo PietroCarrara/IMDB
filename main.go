@@ -85,6 +85,7 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/movie/{id}/nota", getNota)
 	r.HandleFunc("/movie/{id}/rate", avaliar)
 	r.HandleFunc("/movie/{id}/comment", comentar)
+	r.HandleFunc("/movie/{id}/tag-add", addTag)
 	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/user/{nome}", usuario)
@@ -126,6 +127,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 func filme(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
+	options := map[string]interface{}{}
+
+	tags := []model.Tag{}
+	db.Find(&tags)
+	options["alltags"] = tags
+
 	id, err := strconv.ParseUint(vars["id"], 10, 0)
 	if err != nil {
 		return
@@ -133,18 +140,16 @@ func filme(w http.ResponseWriter, r *http.Request) {
 
 	var user *model.Usuario
 
-	logged := map[string]bool{}
-
 	user = currentUser(w, r)
 	if user != nil {
-		logged["logged"] = true
+		options["logged"] = true
 	}
 
 	var filme model.Filme
 	db.Where(model.Filme{ID: uint(id)}).First(&filme)
 	filme.Load(db)
 
-	sla, err := mustache.RenderFile("./templates/movie.html", filme, user, logged)
+	sla, err := mustache.RenderFile("./templates/movie.html", filme, user, options)
 	if err != nil {
 		log.Print(err)
 		return
@@ -272,6 +277,30 @@ func insFilme(w http.ResponseWriter, r *http.Request) {
 	db.Save(&foto)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func addTag(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	idStr := vars["id"]
+	id, _ := strconv.ParseUint(idStr, 10, 0)
+
+	bts, _ := ioutil.ReadAll(r.Body)
+
+	tagName := string(bts)
+
+	var tag model.Tag
+	db.Where(&model.Tag{Titulo: tagName}).First(&tag)
+
+	var filme model.Filme
+	db.Where(&model.Filme{ID: uint(id)}).First(&filme)
+	filme.Load(db)
+
+	if filme.TagAdd(tag) {
+		db.Save(&filme)
+		w.Write([]byte(tag.Titulo))
+	}
 }
 
 func loginPage(w http.ResponseWriter, r *http.Request) {

@@ -27,6 +27,19 @@ func (filme *Filme) Load(db *gorm.DB) {
 	}
 }
 
+// TagAdd adiciona uma tag a um filme
+// se a tag já não existe nele
+func (filme *Filme) TagAdd(t Tag) bool {
+	for _, tag := range filme.Tags {
+		if t.ID == tag.ID {
+			return false
+		}
+	}
+
+	filme.Tags = append(filme.Tags, t)
+	return true
+}
+
 // Banner retorna a primeira imagem
 func (filme Filme) Banner() Imagem {
 	return filme.Imagens[0]
