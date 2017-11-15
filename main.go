@@ -23,11 +23,12 @@ var (
 	backend     httpauth.LeveldbAuthBackend
 	aaa         httpauth.Authorizer
 	roles       map[string]httpauth.Role
-	port        = 8009
 	backendfile = "auth.leveldb"
 
 	db *sql.DB
 )
+
+const port = 8009
 
 func main() {
 
@@ -36,7 +37,7 @@ func main() {
 	db, err = sql.Open("mysql", "IMDB_USER:3T3Dp1uaNXAxbxWv@/IMDB")
 	defer db.Close()
 	if err != nil {
-		log.Print("Erro ao abrir a conexão com o banco em 'main()': " + err.Error())
+		log.Printf("Erro ao abrir a conexão com o banco em 'main()': %s", err.Error())
 	}
 
 	os.Mkdir(backendfile, 0755)
@@ -61,9 +62,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	// Update user with a password and email address
-	aaa.Update(nil, nil, username, "adminadmin", "admin@localhost.com")
 
 	for _, user := range model.LoadAllUsers(db) {
 		err = backend.SaveUser(user.UserData)

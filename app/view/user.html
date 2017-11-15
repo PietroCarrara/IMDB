@@ -22,7 +22,8 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
       <a class="navbar-brand" href="/">IMDb</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -42,16 +43,17 @@
             <a class="nav-link" href="/movies/em-breve">Em breve</a>
           </li>
           <li class="nav-item">
-              <!-- Logado -->
-              {{ #logged }}
-              <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
-              {{ /logged }}
-              <!-- Não Logado -->
-              {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
+            <!-- Logado -->
+            {{ #logged }}
+            <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+            {{ /logged }}
+            <!-- Não Logado -->
+            {{ ^logged }}
+            <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
           </li>
           <li class="nav-item">
             {{ #logged }}
-              <a class="nav-link" href="/logout"> Logout </a>
+            <a class="nav-link" href="/logout"> Logout </a>
             {{ /logged }}
           </li>
         </ul>
@@ -66,7 +68,7 @@
     <div class="row">
 
       <div class="col-lg-3">
-      <h1 class="my-4">Pesquisa</h1>
+        <h1 class="my-4">Pesquisa</h1>
         <div class="list-group">
 
           <section class="busca">
@@ -88,31 +90,31 @@
 
           <div class="col-lg-9 col-md-4 col-xs-6">
 
-              <div class="col-lg-4 col-md-6 mb-4">
-                <ul>
-                    {{ #Avaliacoes }}
+            <div class="col-lg-4 col-md-6 mb-4">
+              <ul>
+                {{ #Avaliacoes }}
 
-                        <li>
-                            <!-- Não Botei a imagem direto pq ficava gigante -->
-                            {{ Filme.Name }} - {{ Nota }}/5
-                        </li>
+                <li>
+                  <!-- Não Botei a imagem direto pq ficava gigante -->
+                  {{ Filme.Name }} - {{ Nota }}/5
+                </li>
 
-                    {{ /Avaliacoes }}
-                </ul>
-              </div>
+                {{ /Avaliacoes }}
+              </ul>
+            </div>
 
-              <div class="col-lg-4 col-md-6 mb-4">
-                <ul>
-                  {{ #Comentarios }}
+            <div class="col-lg-4 col-md-6 mb-4">
+              <ul>
+                {{ #Comentarios }}
 
-                      <li>
-                          <!-- Não Botei a imagem direto pq ficava gigante -->
-                          {{ Alvo.Name }}> {{ Conteudo }}
-                      </li>
+                <li>
+                  <!-- Não Botei a imagem direto pq ficava gigante -->
+                  {{ Alvo.Name }}> {{ Conteudo }}
+                </li>
 
-                  {{ /Comentarios }}
-                </ul>
-              </div>
+                {{ /Comentarios }}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -131,6 +133,6 @@
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  </body>
+</body>
 
-  </html>
+</html>

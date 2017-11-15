@@ -351,6 +351,7 @@ INSERT INTO `usuario_filme_nota` (`ID_FILME`, `ID_USUARIO`, `nota`) VALUES
 --
 
 CREATE TABLE `usuario_filme_review` (
+  `ID` int(11) AUTO_INCREMENT,
   `ID_FILME` int(11) NOT NULL,
   `ID_USUARIO` int(11) NOT NULL,
   `TEXTO` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -423,7 +424,8 @@ ALTER TABLE `usuario_filme_nota`
 -- Indexes for table `usuario_filme_review`
 --
 ALTER TABLE `usuario_filme_review`
-  ADD PRIMARY KEY (`ID_FILME`,`ID_USUARIO`),
+  --ADD PRIMARY KEY (`ID_FILME`,`ID_USUARIO`),
+  ADD PRIMARY KEY (`ID`),
   ADD KEY `FK_USUARIO_FILME_REVIEW_USUARIO` (`ID_USUARIO`);
 
 --

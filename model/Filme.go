@@ -6,12 +6,12 @@ import (
 )
 
 type Filme struct {
+	Id        int64
 	Traducoes []Traducao
 	Tags      []Tag
 	Sinopse   string
 
 	db *sql.DB
-	Id int
 }
 
 // Comentarios retorna os comentarios deste filme
