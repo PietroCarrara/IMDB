@@ -1,6 +1,7 @@
 package model
 
 import "github.com/jinzhu/gorm"
+import "strings"
 
 // Filme representa um filme
 // dentro do site
@@ -69,4 +70,20 @@ func LoadFilmeSlice(f []Filme, db *gorm.DB) {
 	for i := 0; i < len(f); i++ {
 		f[i].Load(db)
 	}
+}
+
+// SearchFilmes busca n
+func SearchFilmes(filmes []Filme, q string) []Filme {
+	res := []Filme{}
+
+	for _, filme := range filmes {
+		lower := strings.ToLower(filme.Titulo)
+		qLower := strings.ToLower(q)
+
+		if strings.Contains(lower, qLower) {
+			res = append(res, filme)
+		}
+	}
+
+	return res
 }

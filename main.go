@@ -86,6 +86,7 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/movie/{id}/rate", avaliar)
 	r.HandleFunc("/movie/{id}/comment", comentar)
 	r.HandleFunc("/movie/{id}/tag-add", addTag)
+	r.HandleFunc("/busca", busca)
 	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/user/{nome}", usuario)
@@ -191,8 +192,33 @@ func usuario(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(sla))
 }
 
-func busca() {
+func busca(w http.ResponseWriter, r *http.Request) {
 
+	q := r.PostFormValue("q")
+
+	filmes := []model.Filme{}
+	db.Find(&filmes)
+
+	filmes = model.SearchFilmes(filmes, q)
+	model.LoadFilmeSlice(filmes, db)
+
+	var user *model.Usuario
+
+	logged := map[string]bool{}
+
+	user = currentUser(w, r)
+	if user != nil {
+		logged["logged"] = true
+	}
+
+	str, err := mustache.RenderFile("./templates/index.html", filmes, logged, user)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(str))
 }
 
 func pessoa(w http.ResponseWriter, r *http.Request) {
