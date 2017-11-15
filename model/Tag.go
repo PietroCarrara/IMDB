@@ -1,56 +1,19 @@
 package model
 
-import "database/sql"
-import "log"
+import "github.com/jinzhu/gorm"
 
-type Tag int
+// Tag representa uma categoria
+// à qual algum filme pertence
+// (Terror, ação, etc...)
+type Tag struct {
+	Titulo string
+	Filmes []Filme `gorm:"many2many:filme_tag"`
 
-const (
-	Terror Tag = iota + 1
-	SciFi
-	Acao
-	Animacao
-)
-
-func (self Tag) String() string {
-	switch self {
-	case Terror:
-		return "Terror"
-	case SciFi:
-		return "Ficção Científica"
-	case Acao:
-		return "Ação"
-	case Animacao:
-		return "Animação"
-	default:
-		return "Null"
-	}
+	ID uint
 }
 
-func LoadTagsByFilme(db *sql.DB, f Filme) []Tag {
-
-	ps, err := db.Prepare("SELECT id_tag FROM filme_tag WHERE id_filme = ?")
-	defer ps.Close()
-	if err != nil {
-		log.Printf("Erro ao preparar o PS em 'LoadTagsByFilme(db, %v)': %s", f, err.Error())
-	}
-
-	res, err := ps.Query(f.Id)
-	defer res.Close()
-	if err != nil {
-		log.Printf("Erro ao executar o PS em 'LoadTagsByFilme(db, %v)': %s", f, err.Error())
-	}
-
-	var tags []Tag
-
-	for res.Next() {
-
-		var tag Tag
-
-		res.Scan(&tag)
-
-		tags = append(tags, tag)
-	}
-
-	return tags
+// Load carrega a tag
+// a partir do banco de dados
+func (t *Tag) Load(db *gorm.DB) {
+	db.Preload("Filmes").Where(&Tag{ID: t.ID}).First(t)
 }

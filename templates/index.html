@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>IMDb - Home</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/css/shop-homepage.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">IMDb</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/noticias">Notícias</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/movies/em-breve">Em breve</a>
+          </li>
+          <li class="nav-item">
+            <!-- Logado -->
+            {{ #logged }}
+            <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+            {{ /logged }}
+            <!-- Não Logado -->
+            {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
+          </li>
+          <li class="nav-item">
+            {{ #logged }}
+            <a class="nav-link" href="/logout"> Logout </a>
+            {{ /logged }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- End Navigation -->
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-lg-3">
+
+        <h1 class="my-4">Home</h1>
+        <div class="list-group">
+
+          <section class="busca">
+            <h4>Busca</h4>
+
+            <form method="POST">
+              <input type="search" name="q">
+            </form>
+            <img src="/img/busca.png" />
+          </section>
+        </div>
+
+      </div>
+      <!-- /.col-lg-3 -->
+
+      <div class="col-lg-9">
+
+        <div class="row">
+
+        {{#.}}
+
+          <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <a href="/movie/{{ ID }}"><img class="card-img-top" src="{{ Banner.Caminho }}" alt=""></a>
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <a href="/movie/{{ ID }}"> {{ Titulo }} </a>
+                  </h4>
+                  <p class="card-text">{{ Sinopse }}</p>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734; ({{ Nota }} Estrelas) </small>
+                </div>
+              </div>
+            </div>
+
+          {{/.}}
+
+        </div>
+
+        <!-- /.row -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

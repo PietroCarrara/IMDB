@@ -1,157 +1,59 @@
 package model
 
-import (
-	"database/sql"
-	"log"
-)
+import "github.com/jinzhu/gorm"
 
+// Filme representa um filme
+// dentro do site
 type Filme struct {
-	Id        int64
-	Traducoes []Traducao
-	Tags      []Tag
-	Sinopse   string
+	Sinopse string `gorm:"size:1024"`
+	Titulo  string
 
-	db *sql.DB
+	Participantes []Participante
+	Tags          []Tag `gorm:"many2many:filme_tag"`
+	Imagens       []Imagem
+	Comentarios   []Comentario
+	Avaliacoes    []Avaliacao
+
+	ID uint
 }
 
-// Comentarios retorna os comentarios deste filme
-func (self *Filme) Comentarios() []*Comentario {
+// Load carrega o filme
+// a partir do banco de dados
+func (filme *Filme) Load(db *gorm.DB) {
+	db.Preload("Participantes").Preload("Imagens").Preload("Tags").Preload("Comentarios").Preload("Avaliacoes").First(filme)
 
-	users := LoadAllUsers(self.db)
-
-	var comentarios []*Comentario
-
-	for _, u := range users {
-		for _, c := range u.Comentarios {
-			if c.Alvo.Id == self.Id {
-				comentarios = append(comentarios, c)
-			}
-		}
+	for i := 0; i < len(filme.Comentarios); i++ {
+		filme.Comentarios[i].Load(db)
 	}
-
-	return comentarios
 }
 
-func (self *Filme) Imagens() []Imagem {
-	imgs := LoadAllImagens(self.db)
-
-	var res []Imagem
-
-	for _, i := range imgs {
-		if i.Filme.Id == self.Id {
-			res = append(res, i)
-		}
-	}
-
-	return res
+// Banner retorna a primeira imagem
+func (filme Filme) Banner() Imagem {
+	return filme.Imagens[0]
 }
 
-func (self *Filme) Banner() Imagem {
-	imgs := self.Imagens()
+// Nota faz a média de todas as
+// avaliações do filme
+func (filme Filme) Nota() float32 {
 
-	var i int
+	var nota float32
 
-	menor := imgs[0].Id
-
-	for index, val := range imgs[1:] {
-		if val.Id < menor {
-			i = index
-			menor = val.Id
-		}
+	for _, aval := range filme.Avaliacoes {
+		nota += aval.Nota
 	}
 
-	return imgs[i]
+	len := len(filme.Avaliacoes)
+	if len < 1 {
+		len = 1
+	}
+
+	return nota / float32(len)
 }
 
-func (self *Filme) Name() string {
-	return self.Traducoes[Brasil].Titulo
-}
-
-func (self *Filme) Pessoas() []Pessoa {
-	return nil
-}
-
-func (self *Filme) Nota() float32 {
-	users := LoadAllUsers(self.db)
-
-	var soma, total float32
-
-	for _, user := range users {
-		for _, aval := range user.Avaliacoes {
-			if aval.Filme.Id == self.Id {
-				soma += aval.Nota
-				total++
-				break
-			}
-		}
+// LoadFilmeSlice carrega um vetor de
+// filmes a partir do banco de dados
+func LoadFilmeSlice(f []Filme, db *gorm.DB) {
+	for i := 0; i < len(f); i++ {
+		f[i].Load(db)
 	}
-
-	// Evitar divisão por zero
-	if total < 1 {
-		total = 1
-	}
-
-	return soma / total
-}
-
-// LoadFilme carrega o filme de Id informado
-func LoadFilme(db *sql.DB, Id int) *Filme {
-	ps, err := db.Prepare("SELECT Id, sinopse FROM filme WHERE Id = ?")
-	defer ps.Close()
-	if err != nil {
-		log.Printf("Erro ao preparar o PS em 'LoadFilme(db, %d)': %s", Id, err.Error())
-		return nil
-	}
-
-	res, err := ps.Query(Id)
-	defer res.Close()
-	if err != nil {
-		log.Print("Erro ao executar o PS em 'LoadFilme(db, %d)': %s", Id, err.Error())
-		return nil
-	}
-
-	if res.Next() {
-
-		var filme Filme
-
-		res.Scan(&filme.Id, &filme.Sinopse)
-
-		filme.db = db
-
-		filme.Traducoes = LoadTraducoesByFilme(db, filme)
-		filme.Tags = LoadTagsByFilme(db, filme)
-
-		return &filme
-	}
-
-	return nil
-}
-
-// LoadFilme carrega o filme de Id informado
-func LoadAllFilmes(db *sql.DB) []*Filme {
-
-	res, err := db.Query("SELECT Id, sinopse FROM filme")
-	defer res.Close()
-	if err != nil {
-		log.Print("Erro ao executar o PS em 'LoadFilme(db)': %s", err.Error())
-		return nil
-	}
-
-	var filmes []*Filme
-
-	for res.Next() {
-
-		var filme Filme
-
-		res.Scan(&filme.Id, &filme.Sinopse)
-
-		filme.db = db
-
-		filme.Traducoes = LoadTraducoesByFilme(db, filme)
-		filme.Tags = LoadTagsByFilme(db, filme)
-
-		filmes = append(filmes, &filme)
-	}
-
-	return filmes
 }
