@@ -13,7 +13,7 @@ import (
 
 	"github.com/apexskier/httpauth"
 	"github.com/jinzhu/gorm"
-	"gitlab.com/rosso_pietro/IMDB_GORM/model"
+	"gitlab.com/rosso_pietro/IMDB/model"
 
 	_ "github.com/go-sql-driver/mysql"
 )
