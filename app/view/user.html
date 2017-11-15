@@ -3,134 +3,136 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>IMDb - User logs</title>
+    <title>IMDb - User logs</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <link href="/css/thumbnail-gallery.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/css/thumbnail-gallery.css" rel="stylesheet">
 
 </head>
 
 <body>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="/">IMDb</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/noticias">Notícias</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies/em-breve">Em breve</a>
-          </li>
-          <li class="nav-item">
-              <!-- Logado -->
-              {{ #logged }}
-              <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
-              {{ /logged }}
-              <!-- Não Logado -->
-              {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
-          </li>
-          <li class="nav-item">
-            {{ #logged }}
-              <a class="nav-link" href="/logout"> Logout </a>
-            {{ /logged }}
-          </li>
-        </ul>
-      </div>
+        <a class="navbar-brand" href="/">IMDb</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/noticias">Notícias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/movies/em-breve">Em breve</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Logado -->
+                    {{ #logged }}
+                    <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+                    {{ /logged }}
+                    <!-- Não Logado -->
+                    {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
+                </li>
+                <li class="nav-item">
+                    {{ #logged }}
+                    <a class="nav-link" href="/logout"> Logout </a>
+                    {{ /logged }}
+                </li>
+            </ul>
+        </div>
     </div>
-  </nav>
-  <!-- End Navigation -->
+</nav>
+<!-- End Navigation -->
 
-  <!-- Page Content -->
-  <div class="container">
+<!-- Page Content -->
+<div class="container">
 
     <div class="row">
 
-      <div class="col-lg-3">
-      <h1 class="my-4">Pesquisa</h1>
-        <div class="list-group">
+        <div class="col-lg-3">
+            <h1 class="my-4">Pesquisa</h1>
+            <div class="list-group">
 
-          <section class="busca">
-            <h4>Busca</h4>
+                <section class="busca">
+                    <h4>Busca</h4>
 
-            <form>
-              <input type="search" style="width: 227px">
-              <input type="image" src="img/busca.png">
-            </form>
-          </section>
+                    <form>
+                        <input type="search" style="width: 227px">
+                        <input type="image" src="img/busca.png">
+                    </form>
+                </section>
+            </div>
         </div>
-      </div>
 
-      <div class="col-lg-9">
+        <div class="col-lg-9">
 
-        <h1 class="my-4 text-center text-lg-left">Suas ações:</h1>
+            <h1 class="my-4 text-center text-lg-left">Suas ações:</h1>
 
-        <div class="row text-center text-lg-left">
+            <div class="row text-center text-lg-left">
 
-          <div class="col-lg-9 col-md-4 col-xs-6">
+                <div class="col-lg-9 col-md-4 col-xs-6">
 
-              <div class="col-lg-4 col-md-6 mb-4">
-                <ul>
-                    {{ #Avaliacoes }}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <ul>
+                            <h2>Avaliações: </h2>
+                            {{ #Avaliacoes }}
 
-                        <li>
-                            <!-- Não Botei a imagem direto pq ficava gigante -->
-                            {{ Filme.Name }} - {{ Nota }}/5
-                        </li>
+                            <li>
+                                <!-- Não Botei a imagem direto pq ficava gigante -->
+                                {{ Filme.Name }} - {{ Nota }}/5
+                            </li>
 
-                    {{ /Avaliacoes }}
-                </ul>
-              </div>
+                            {{ /Avaliacoes }}
+                        </ul>
+                    </div>
 
-              <div class="col-lg-4 col-md-6 mb-4">
-                <ul>
-                  {{ #Comentarios }}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <h2>Comentários: </h2>
+                        <ul>
+                            {{ #Comentarios }}
 
-                      <li>
-                          <!-- Não Botei a imagem direto pq ficava gigante -->
-                          {{ Alvo.Name }}> {{ Conteudo }}
-                      </li>
+                            <li>
+                                <!-- Não Botei a imagem direto pq ficava gigante -->
+                                {{ Alvo.Name }}> {{ Conteudo }}
+                            </li>
 
-                  {{ /Comentarios }}
-                </ul>
-              </div>
-          </div>
+                            {{ /Comentarios }}
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <!-- /.container -->
 
     <!-- Footer -->
     <footer class="py-5 bg-dark">
-      <div class="container">
-        <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
-      </div>
-      <!-- /.container -->
+        <div class="container">
+            <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights
+                Reserved.</p>
+        </div>
+        <!-- /.container -->
     </footer>
 
     <!-- Bootstrap core JavaScript -->
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  </body>
+</body>
 
-  </html>
+</html>
