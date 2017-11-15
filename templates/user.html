@@ -39,20 +39,18 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/movies/em-breve">Em breve</a>
-                </li><!--
+                </li>
                 <li class="nav-item active">
-                     Logado
                     {{ #logged }}
                     <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
                     {{ /logged }}
-                     Não Logado
                     {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
                 </li>
                 <li class="nav-item">
                     {{ #logged }}
                     <a class="nav-link" href="/logout"> Logout </a>
                     {{ /logged }}
-                </li>-->
+                </li>
             </ul>
         </div>
     </div>
