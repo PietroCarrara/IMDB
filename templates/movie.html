@@ -147,7 +147,7 @@
               <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
               <p> {{ Conteudo }} </p>
               <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
-              <small class="text-muted"> Postado por {{ Usuario.Nome }}</small>
+              <small class="text-muted"> Postado por <a href="/user/{{Usuario.Nome}}">{{ Usuario.Nome }}</a></small>
               <hr>
               <!-- Feche o loop -->
               {{ /Comentarios }}
@@ -186,7 +186,9 @@
         $.post("/movie/{{ID}}/comment", $("#com").val())
           .done(function (comentario) {
             $("#comment-box")
-              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por {{ Nome }} </small><hr>')
+              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por <a href="/user/{{Usuario.Nome}}">{{ Nome }}</a> </small><hr>');
+            
+            $('#com').val('');
           });
       }
 

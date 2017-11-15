@@ -81,7 +81,7 @@
                             {{ #target.Avaliacoes }}
                             <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
                             <p> {{ Nota }}/5 </p>
-                            <small class="text-muted">{{ Filme.Name }}</small>
+                            <small class="text-muted">{{ Filme.Titulo }}</small>
                             <hr>
                             <!-- Feche o loop -->
                             {{ /target.Avaliacoes }}
@@ -103,7 +103,7 @@
                                 <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
                                 <p> {{ Conteudo }} </p>
                                 <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
-                                <small class="text-muted"> {{ Alvo.Name }} > {{ Filme.Name }}</small>
+                                <small class="text-muted"> {{ Usuario.Nome }} > <a href="/movie/{{FilmeID}}">{{ Filme.Titulo }}</a></small>
                                 <hr>
                                 <!-- Feche o loop -->
                                 {{ /target.Comentarios }}

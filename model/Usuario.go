@@ -62,7 +62,7 @@ func (user *Usuario) Load(db *gorm.DB) {
 func (c *Comentario) Load(db *gorm.DB) {
 
 	db.Where(&Usuario{ID: c.UsuarioID}).First(&c.Usuario)
-
+	db.Where(&Filme{ID: c.FilmeID}).First(&c.Filme)
 }
 
 // Load carrega a avaliacao
