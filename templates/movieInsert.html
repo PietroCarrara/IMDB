@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>IMDb - Inserir filme</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/shop-item.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">IMDb</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/noticias">Notícias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/movies/em-breve">Em breve</a>
+                </li>
+                <li class="nav-item">
+                    {{ #logged }}
+                        <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
+                    {{ /logged }}
+                    {{ ^logged }} 
+                        <a class="nav-link" href="/login">Sign In/Sign Up</a>
+                    {{ /logged }}
+                </li>
+                <li class="nav-item">
+                    {{ #logged }}
+                    <a class="nav-link" href="/logout"> Logout </a>
+                    {{ /logged }}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- End Navigation -->
+
+<!-- Page Content -->
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-lg-3">
+            <h1 class="my-4">Inserir filme</h1>
+        </div>
+        <!-- /.col-lg-3 -->
+
+        <div class="col-lg-9">
+
+            <div class="col-md-9">
+
+                <form method="POST" action="/movie/insert">
+                <div class="form-group">
+                    <label label-default="" class="col-lg-5 control-label label-default">Selecione a foto do filme:</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" name="pic" type="file">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label label-default="" class="col-lg-3 control-label label-default">Nome:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" name="titulo" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label label-default="" class="col-lg-3 control-label label-default">Sinopse:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" name="sinopse" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label label-default="" class="col-md-3 control-label label-default"></label>
+                    <div class="col-md-8">
+                        <input class="btn btn-primary" value="Save Changes" type="submit"> <span></span>
+
+                        <input class="btn btn-default" value="Cancel" type="reset">
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.col-lg-9 -->
+
+    </div>
+
+</div>
+<!-- /.container -->
+
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <!-- Footer -->
+        <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
+    </div>
+
+    <!-- /.container -->
+</footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
