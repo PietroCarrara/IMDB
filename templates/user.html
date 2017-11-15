@@ -9,10 +9,10 @@
     <title>IMDb - User logs</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/css/thumbnail-gallery.css" rel="stylesheet">
+    <link href="css/thumbnail-gallery.css" rel="stylesheet">
 
 </head>
 
@@ -39,20 +39,20 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/movies/em-breve">Em breve</a>
-                </li>
-                <li class="nav-item">
-                    <!-- Logado -->
+                </li><!--
+                <li class="nav-item active">
+                     Logado
                     {{ #logged }}
                     <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
                     {{ /logged }}
-                    <!-- Não Logado -->
+                     Não Logado
                     {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
                 </li>
                 <li class="nav-item">
                     {{ #logged }}
                     <a class="nav-link" href="/logout"> Logout </a>
                     {{ /logged }}
-                </li>
+                </li>-->
             </ul>
         </div>
     </div>
@@ -71,33 +71,48 @@
 
                 <div class="col-lg-9 col-md-4 col-xs-6">
 
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <ul>
-                            <h2>Avaliações: </h2>
+                    <div class="card card-outline-secondary my-4">
+
+                        <div class="card-header">
+                            Avaliações
+                        </div>
+
+                        <div class="card-body" id="comment-box">
+
+                            <!-- Percorra o vetor de comentários -->
                             {{ #target.Avaliacoes }}
-
-                            <li>
-                                <!-- Não Botei a imagem direto pq ficava gigante -->
-                                {{ Filme.Name }} - {{ Nota }}/5
-                            </li>
-
+                            <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
+                            <p> {{ Nota }}/5 </p>
+                            <small class="text-muted">{{ Filme.Name }}</small>
+                            <hr>
+                            <!-- Feche o loop -->
                             {{ /target.Avaliacoes }}
-                        </ul>
+                        </div>
+
                     </div>
 
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <h2>Comentários: </h2>
-                        <ul>
-                            {{ #target.Comentarios }}
 
-                            <li>
-                                <!-- Não Botei a imagem direto pq ficava gigante -->
-                                {{ Alvo.Name }}> {{ Conteudo }}
-                            </li>
+                        <div class="card card-outline-secondary my-4">
 
-                            {{ /target.Comentarios }}
-                        </ul>
-                    </div>
+                            <div class="card-header">
+                                Comentários
+                            </div>
+
+                            <div class="card-body" id="comment-box">
+
+                                <!-- Percorra o vetor de comentários -->
+                                {{ #target.Comentarios }}
+                                <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
+                                <p> {{ Conteudo }} </p>
+                                <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
+                                <small class="text-muted"> {{ Alvo.Name }} > {{ Filme.Name }}</small>
+                                <hr>
+                                <!-- Feche o loop -->
+                                {{ /target.Comentarios }}
+                            </div>
+                            
+                        </div>
+
                 </div>
             </div>
         </div>
