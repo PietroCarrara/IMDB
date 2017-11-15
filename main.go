@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -84,6 +85,8 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/movie/{id}/nota", getNota)
 	r.HandleFunc("/movie/{id}/rate", avaliar)
 	r.HandleFunc("/movie/{id}/comment", comentar)
+	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
+	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
 	r.HandleFunc("/tags/{nome}", tag)
@@ -161,6 +164,7 @@ func usuario(w http.ResponseWriter, r *http.Request) {
 
 	user = currentUser(w, r)
 	if user != nil {
+		user.Load(db)
 		options["logged"] = true
 	}
 
@@ -218,6 +222,58 @@ func tag(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(str))
+}
+
+func insFilmePage(w http.ResponseWriter, r *http.Request) {
+	options := map[string]interface{}{}
+
+	usr := currentUser(w, r)
+	if usr == nil || !usr.IsAdmin {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	options["logged"] = true
+	options["user"] = usr
+
+	str, _ := mustache.RenderFile("./templates/movieInsert.html", options)
+
+	w.Write([]byte(str))
+}
+
+func insFilme(w http.ResponseWriter, r *http.Request) {
+
+	titulo := r.PostFormValue("titulo")
+	sinopse := r.PostFormValue("sinopse")
+
+	filme := model.Filme{Titulo: titulo, Sinopse: sinopse}
+
+	db.Save(&filme)
+
+	pic, _, err := r.FormFile("pic")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	foto := model.Imagem{FilmeID: filme.ID}
+
+	db.Save(&foto)
+
+	name := fmt.Sprintf("/uploads/upload%d.jpg", foto.ID)
+
+	file, err := os.Create("./static" + name)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	if pic == nil {
+		fmt.Print("deu ruim")
+	}
+	_, err = io.Copy(file, pic)
+	fmt.Println("sla")
+
+	foto.Caminho = name
+
+	db.Save(&foto)
 }
 
 func loginPage(w http.ResponseWriter, r *http.Request) {
@@ -302,9 +358,13 @@ func avaliar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	aval := model.Avaliacao{FilmeID: uint(id), UsuarioID: user.ID, Nota: float32(nota)}
+	aval := model.Avaliacao{FilmeID: uint(id), UsuarioID: user.ID}
 
-	db.Assign(aval).FirstOrCreate(&aval)
+	db.Where(&aval).FirstOrCreate(&aval)
+
+	aval.Nota = float32(nota)
+
+	db.Save(&aval)
 
 	w.Write([]byte(n))
 }
@@ -369,7 +429,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusAccepted)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func currentUser(w http.ResponseWriter, r *http.Request) *model.Usuario {
