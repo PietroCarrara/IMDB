@@ -89,6 +89,7 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/busca", busca)
 	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
+	r.HandleFunc("/admin/toggle/{id}", toggleAdmin)
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
 	r.HandleFunc("/tags/{nome}", tag)
@@ -423,6 +424,23 @@ func avaliar(w http.ResponseWriter, r *http.Request) {
 	db.Save(&aval)
 
 	w.Write([]byte(n))
+}
+
+func toggleAdmin(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	id, _ := strconv.ParseUint(vars["id"], 10, 0)
+
+	usr := model.Usuario{ID: uint(id)}
+
+	db.First(&usr)
+
+	usr.IsAdmin = !usr.IsAdmin
+
+	db.Save(&usr)
+
+	fmt.Fprintf(w, "%t", usr.IsAdmin)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
