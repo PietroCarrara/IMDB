@@ -41,11 +41,17 @@
                     <a class="nav-link" href="/movies/em-breve">Em breve</a>
                 </li>
                 <li class="nav-item active">
+<<<<<<< HEAD
                     <!-- Logado -->
                     {{ #logged }}
                     <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
                     {{ /logged }}
                     <!-- Não Logado -->
+=======
+                    {{ #logged }}
+                    <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
+                    {{ /logged }}
+>>>>>>> c9b643de2c3094769555e93b75093aa8e1cceb13
                     {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
                 </li>
                 <li class="nav-item">
@@ -83,7 +89,7 @@
                             {{ #target.Avaliacoes }}
                             <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
                             <p> {{ Nota }}/5 </p>
-                            <small class="text-muted">{{ Filme.Name }}</small>
+                            <small class="text-muted">{{ Filme.Titulo }}</small>
                             <hr>
                             <!-- Feche o loop -->
                             {{ /target.Avaliacoes }}
@@ -105,7 +111,7 @@
                                 <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
                                 <p> {{ Conteudo }} </p>
                                 <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
-                                <small class="text-muted"> {{ Alvo.Name }} > {{ Filme.Name }}</small>
+                                <small class="text-muted"> {{ Usuario.Nome }} > <a href="/movie/{{FilmeID}}">{{ Filme.Titulo }}</a></small>
                                 <hr>
                                 <!-- Feche o loop -->
                                 {{ /target.Comentarios }}

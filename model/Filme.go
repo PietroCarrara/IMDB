@@ -1,6 +1,7 @@
 package model
 
 import "github.com/jinzhu/gorm"
+import "strings"
 
 // Filme representa um filme
 // dentro do site
@@ -8,8 +9,8 @@ type Filme struct {
 	Sinopse string `gorm:"size:1024"`
 	Titulo  string
 
-	Participantes []Participante
-	Tags          []Tag `gorm:"many2many:filme_tag"`
+	Participantes []Participante `gorm:"many2many:pessoa_filme"`
+	Tags          []Tag          `gorm:"many2many:filme_tag"`
 	Imagens       []Imagem
 	Comentarios   []Comentario
 	Avaliacoes    []Avaliacao
@@ -25,6 +26,23 @@ func (filme *Filme) Load(db *gorm.DB) {
 	for i := 0; i < len(filme.Comentarios); i++ {
 		filme.Comentarios[i].Load(db)
 	}
+
+	for i := 0; i < len(filme.Participantes); i++ {
+		filme.Participantes[i].Load(db)
+	}
+}
+
+// TagAdd adiciona uma tag a um filme
+// se a tag já não existe nele
+func (filme *Filme) TagAdd(t Tag) bool {
+	for _, tag := range filme.Tags {
+		if t.ID == tag.ID {
+			return false
+		}
+	}
+
+	filme.Tags = append(filme.Tags, t)
+	return true
 }
 
 // Banner retorna a primeira imagem
@@ -56,4 +74,20 @@ func LoadFilmeSlice(f []Filme, db *gorm.DB) {
 	for i := 0; i < len(f); i++ {
 		f[i].Load(db)
 	}
+}
+
+// SearchFilmes busca n
+func SearchFilmes(filmes []Filme, q string) []Filme {
+	res := []Filme{}
+
+	for _, filme := range filmes {
+		lower := strings.ToLower(filme.Titulo)
+		qLower := strings.ToLower(q)
+
+		if strings.Contains(lower, qLower) {
+			res = append(res, filme)
+		}
+	}
+
+	return res
 }

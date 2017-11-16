@@ -50,10 +50,10 @@ func (user *Usuario) Load(db *gorm.DB) {
 		user.Watchlist[i].Load(db)
 	}
 	for i := 0; i < len(user.Comentarios); i++ {
-		// user.Comentarios[i].Load(db)
+		user.Comentarios[i].Load(db)
 	}
 	for i := 0; i < len(user.Avaliacoes); i++ {
-		// user.Avaliacoes[i].Load(db)
+		user.Avaliacoes[i].Load(db)
 	}
 }
 
@@ -62,7 +62,13 @@ func (user *Usuario) Load(db *gorm.DB) {
 func (c *Comentario) Load(db *gorm.DB) {
 
 	db.Where(&Usuario{ID: c.UsuarioID}).First(&c.Usuario)
+	db.Where(&Filme{ID: c.FilmeID}).First(&c.Filme)
+}
 
+// Load carrega a avaliacao
+// a partir do banco de dados
+func (a *Avaliacao) Load(db *gorm.DB) {
+	db.Where(&Usuario{ID: a.FilmeID}).First(&a.Filme)
 }
 
 // ComentarioAdd adiciona um comentário

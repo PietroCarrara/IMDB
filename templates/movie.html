@@ -90,13 +90,25 @@
 
         <div class="col-lg-3">
           <h1 class="my-4">{{ Titulo }}</h1>
-          <div class="list-group">
+          <div class="list-group" id="tags">
             {{#Tags}}
 
-            <a href="/tags/{{ Titulo }}" class="list-group-item">{{ Titulo }}</a>
+              <a href="/tags/{{ Titulo }}" class="list-group-item">{{ Titulo }}</a>
 
             {{/Tags}}
           </div>
+          {{#logged}}
+            {{#IsAdmin}}
+            <form action="JavaScript:adicionarTag()">
+              <select id="tagAdd">
+              {{#alltags}}
+                <option value="{{Titulo}}" >{{Titulo}}</option>
+              {{/alltags}}
+              <input type="submit" value="Adicionar">
+              </select>
+            </form>
+            {{/IsAdmin}}
+          {{/logged}}
         </div>
         <!-- /.col-lg-3 -->
 
@@ -114,7 +126,7 @@
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
-                <input type="submit">
+                <input type="submit" value="Avaliar">
               </form>
               <span class="text-warning" id="stars">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
               <p id="estrelas">
@@ -135,7 +147,7 @@
               <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
               <p> {{ Conteudo }} </p>
               <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
-              <small class="text-muted"> Postado por {{ Usuario.Nome }}</small>
+              <small class="text-muted"> Postado por <a href="/user/{{Usuario.Nome}}">{{ Usuario.Nome }}</a></small>
               <hr>
               <!-- Feche o loop -->
               {{ /Comentarios }}
@@ -174,7 +186,9 @@
         $.post("/movie/{{ID}}/comment", $("#com").val())
           .done(function (comentario) {
             $("#comment-box")
-              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por {{ Nome }} </small><hr>')
+              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por <a href="/user/{{Nome}}">{{ Nome }}</a> </small><hr>');
+            
+            $('#com').val('');
           });
       }
 
@@ -188,11 +202,20 @@
           })
         })
       }
+
+      function adicionarTag() {
+        $.post("/movie/{{ID}}/tag-add", $("#tagAdd").val())
+        .done(
+          function(tag) {
+            if (tag != ''){
+              $("#tags").append('<a href="/tags/' + tag + '" class="list-group-item">' + tag + '</a>')
+            }
+          }
+        )
+      }
+
+      makeStars({{Nota}})
     </script>
-
-  </body>
-
-  </html>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 

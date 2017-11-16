@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -84,6 +85,10 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/movie/{id}/nota", getNota)
 	r.HandleFunc("/movie/{id}/rate", avaliar)
 	r.HandleFunc("/movie/{id}/comment", comentar)
+	r.HandleFunc("/movie/{id}/tag-add", addTag)
+	r.HandleFunc("/busca", busca)
+	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
+	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
 	r.HandleFunc("/tags/{nome}", tag)
@@ -123,6 +128,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 func filme(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
+	options := map[string]interface{}{}
+
+	tags := []model.Tag{}
+	db.Find(&tags)
+	options["alltags"] = tags
+
 	id, err := strconv.ParseUint(vars["id"], 10, 0)
 	if err != nil {
 		return
@@ -130,18 +141,16 @@ func filme(w http.ResponseWriter, r *http.Request) {
 
 	var user *model.Usuario
 
-	logged := map[string]bool{}
-
 	user = currentUser(w, r)
 	if user != nil {
-		logged["logged"] = true
+		options["logged"] = true
 	}
 
 	var filme model.Filme
 	db.Where(model.Filme{ID: uint(id)}).First(&filme)
 	filme.Load(db)
 
-	sla, err := mustache.RenderFile("./templates/movie.html", filme, user, logged)
+	sla, err := mustache.RenderFile("./templates/movie.html", filme, user, options)
 	if err != nil {
 		log.Print(err)
 		return
@@ -161,6 +170,7 @@ func usuario(w http.ResponseWriter, r *http.Request) {
 
 	user = currentUser(w, r)
 	if user != nil {
+		user.Load(db)
 		options["logged"] = true
 	}
 
@@ -182,13 +192,41 @@ func usuario(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(sla))
 }
 
-func busca() {
+func busca(w http.ResponseWriter, r *http.Request) {
 
+	q := r.PostFormValue("q")
+
+	filmes := []model.Filme{}
+	db.Find(&filmes)
+
+	filmes = model.SearchFilmes(filmes, q)
+	model.LoadFilmeSlice(filmes, db)
+
+	var user *model.Usuario
+
+	logged := map[string]bool{}
+
+	user = currentUser(w, r)
+	if user != nil {
+		logged["logged"] = true
+	}
+
+	str, err := mustache.RenderFile("./templates/index.html", filmes, logged, user)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(str))
 }
 
 func pessoa(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	//id, err := strconv.ParseUint(vars["id"], 10, 0)
+	vars := mux.Vars(r)
+	id, _ := strconv.ParseUint(vars["id"], 10, 0)
+
+	pessoa := model.Pessoa{ID: uint(id)}
+	db.First(&pessoa)
 }
 
 func tag(w http.ResponseWriter, r *http.Request) {
@@ -218,6 +256,80 @@ func tag(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(str))
+}
+
+func insFilmePage(w http.ResponseWriter, r *http.Request) {
+	options := map[string]interface{}{}
+
+	usr := currentUser(w, r)
+	if usr == nil || !usr.IsAdmin {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	options["logged"] = true
+	options["user"] = usr
+
+	str, _ := mustache.RenderFile("./templates/movieInsert.html", options)
+
+	w.Write([]byte(str))
+}
+
+func insFilme(w http.ResponseWriter, r *http.Request) {
+
+	titulo := r.PostFormValue("titulo")
+	sinopse := r.PostFormValue("sinopse")
+
+	filme := model.Filme{Titulo: titulo, Sinopse: sinopse}
+
+	db.Save(&filme)
+
+	pic, _, err := r.FormFile("pic")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	foto := model.Imagem{FilmeID: filme.ID}
+
+	db.Save(&foto)
+
+	name := fmt.Sprintf("/uploads/upload%d.jpg", foto.ID)
+
+	file, err := os.Create("./static" + name)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	_, err = io.Copy(file, pic)
+
+	foto.Caminho = name
+
+	db.Save(&foto)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func addTag(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	idStr := vars["id"]
+	id, _ := strconv.ParseUint(idStr, 10, 0)
+
+	bts, _ := ioutil.ReadAll(r.Body)
+
+	tagName := string(bts)
+
+	var tag model.Tag
+	db.Where(&model.Tag{Titulo: tagName}).First(&tag)
+
+	var filme model.Filme
+	db.Where(&model.Filme{ID: uint(id)}).First(&filme)
+	filme.Load(db)
+
+	if filme.TagAdd(tag) {
+		db.Save(&filme)
+		w.Write([]byte(tag.Titulo))
+	}
 }
 
 func loginPage(w http.ResponseWriter, r *http.Request) {
@@ -302,9 +414,13 @@ func avaliar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	aval := model.Avaliacao{FilmeID: uint(id), UsuarioID: user.ID, Nota: float32(nota)}
+	aval := model.Avaliacao{FilmeID: uint(id), UsuarioID: user.ID}
 
-	db.Assign(aval).FirstOrCreate(&aval)
+	db.Where(&aval).FirstOrCreate(&aval)
+
+	aval.Nota = float32(nota)
+
+	db.Save(&aval)
 
 	w.Write([]byte(n))
 }
@@ -369,7 +485,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusAccepted)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func currentUser(w http.ResponseWriter, r *http.Request) *model.Usuario {

@@ -41,14 +41,23 @@
           <li class="nav-item">
             <a class="nav-link" href="/movies/em-breve">Em breve</a>
           </li>
-          <li class="nav-item">
             <!-- Logado -->
             {{ #logged }}
-            <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+            </li>
+            {{ #IsAdmin }}
+              <li class="nav-item">
+                <a class="nav-link" href="/admin/insert/movie">Inserir Filme</a>
+              </li>
+            {{ /IsAdmin }}
             {{ /logged }}
             <!-- Não Logado -->
-            {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
-          </li>
+            {{ ^logged }}
+              <li class="nav-item">            
+                <a class="nav-link" href="/login">Sign In/Sign Up</a>
+              <li class="nav-item">              
+            {{ /logged }}
           <li class="nav-item">
             {{ #logged }}
             <a class="nav-link" href="/logout"> Logout </a>
@@ -73,10 +82,10 @@
           <section class="busca">
             <h4>Busca</h4>
 
-            <form method="POST">
+            <form method="POST" action="/busca">
               <input type="search" name="q">
+              <img src="/img/busca.png" />              
             </form>
-            <img src="/img/busca.png" />
           </section>
         </div>
 
