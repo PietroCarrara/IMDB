@@ -1,15 +1,27 @@
 package model
 
 import (
-	"time"
+	"github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
-// Pessoa é alguém que participa em filmes
-// (atores, diretores, etc...)
 type Pessoa struct {
-	Nascimento    time.Time
+	Nome          string
+	Nascimento    mysql.NullTime
 	Imagens       []Imagem `gorm:"many2many:pessoa_imagem"`
-	Participacoes []Participante
+	Participacoes []Filme  `gorm:"many2many:pessoa_filme"`
 
 	ID uint
+}
+
+// ProfilePic retorna a primeira
+// imagem da pessoa
+func (p Pessoa) ProfilePic() Imagem {
+	return p.Imagens[0]
+}
+
+// Load carrega a pessoa
+// a partir do banco de dados
+func (p *Pessoa) Load(db *gorm.DB) {
+	db.Preload("Imagens").Preload("Participacoes").First(p)
 }

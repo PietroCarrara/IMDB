@@ -72,7 +72,7 @@
 
             <div class="col-md-9">
 
-                <form method="POST" action="/person/insert">
+                <form method="POST" enctype="multipart/form-data" action="/admin/insert/person">
                 <div class="form-group">
                     <label label-default="" class="col-lg-5 control-label label-default">Selecione fotos da pessoa:</label>
                     <div class="col-lg-10">
@@ -87,27 +87,21 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label label-default="" class="col-lg-3 control-label label-default">Filmes:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" name="filmes" type="text">
-                    </div>
-                </div>
-                <div class="form-group">
                     <label label-default="" class="col-lg-3 control-label label-default">Data nasc (ano):</label>
                     <div class="col-lg-8">
-                        <input class="form-control" name="data_nasc_ano" type="text">
+                        <input class="form-control" name="ano" type="text">
                     </div>
                 </div>
                 <div class="form-group">
                     <label label-default="" class="col-lg-3 control-label label-default">Data nasc (mês):</label>
                     <div class="col-lg-8">
-                        <input class="form-control" name="data_nasc_mes" type="text">
+                        <input class="form-control" name="mes" type="text">
                     </div>
                 </div>
                 <div class="form-group">
                     <label label-default="" class="col-lg-3 control-label label-default">Data nasc (dia):</label>
                     <div class="col-lg-8">
-                        <input class="form-control" name="data_nasc_dia" type="text">
+                        <input class="form-control" name="dia" type="text">
                     </div>
                 </div>
                 <div class="form-group">
