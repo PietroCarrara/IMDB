@@ -8,15 +8,15 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/cbroglie/mustache"
+	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 
 	"github.com/apexskier/httpauth"
 	"github.com/jinzhu/gorm"
 	"gitlab.com/rosso_pietro/IMDB/model"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -40,7 +40,6 @@ func main() {
 	}
 
 	db.AutoMigrate(&model.Filme{})
-	db.AutoMigrate(&model.Participante{})
 	db.AutoMigrate(&model.Pessoa{})
 	db.AutoMigrate(&model.Cargo{})
 	db.AutoMigrate(&model.Tag{})
@@ -89,6 +88,8 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/busca", busca)
 	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
+	r.HandleFunc("/admin/insert/person", insPessoaPage).Methods("GET")
+	r.HandleFunc("/admin/insert/person", insPessoa).Methods("POST")
 	r.HandleFunc("/admin/toggle/{id}", toggleAdmin)
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
@@ -259,6 +260,23 @@ func tag(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(str))
 }
 
+func insPessoaPage(w http.ResponseWriter, r *http.Request) {
+	options := map[string]interface{}{}
+
+	usr := currentUser(w, r)
+	if usr == nil || !usr.IsAdmin {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	options["logged"] = true
+	options["user"] = usr
+
+	str, _ := mustache.RenderFile("./templates/person.html", options)
+
+	w.Write([]byte(str))
+}
+
 func insFilmePage(w http.ResponseWriter, r *http.Request) {
 	options := map[string]interface{}{}
 
@@ -274,6 +292,48 @@ func insFilmePage(w http.ResponseWriter, r *http.Request) {
 	str, _ := mustache.RenderFile("./templates/movieInsert.html", options)
 
 	w.Write([]byte(str))
+}
+
+func insPessoa(w http.ResponseWriter, r *http.Request) {
+	nome := r.PostFormValue("nome")
+
+	dia, _ := strconv.Atoi(r.PostFormValue("dia"))
+	mes, _ := strconv.Atoi(r.PostFormValue("mes"))
+	ano, _ := strconv.Atoi(r.PostFormValue("ano"))
+
+	m := time.Month(mes)
+
+	t := time.Date(ano, m, dia, 0, 0, 0, 0, time.Local)
+
+	nasc := mysql.NullTime{Time: t, Valid: true}
+
+	pessoa := model.Pessoa{Nome: nome, Nascimento: nasc}
+
+	db.Save(&pessoa)
+
+	pic, _, err := r.FormFile("pic")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	foto := model.Imagem{}
+	foto.Pessoas = append(foto.Pessoas, pessoa)
+
+	db.Save(&foto)
+
+	name := fmt.Sprintf("/uploads/upload%d", foto.ID)
+
+	file, err := os.Create("./static" + name)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	_, err = io.Copy(file, pic)
+
+	foto.Caminho = name
+
+	db.Save(&foto)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func insFilme(w http.ResponseWriter, r *http.Request) {
@@ -293,7 +353,7 @@ func insFilme(w http.ResponseWriter, r *http.Request) {
 
 	db.Save(&foto)
 
-	name := fmt.Sprintf("/uploads/upload%d.jpg", foto.ID)
+	name := fmt.Sprintf("/uploads/upload%d", foto.ID)
 
 	file, err := os.Create("./static" + name)
 	if err != nil {

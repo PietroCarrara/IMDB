@@ -1,15 +1,12 @@
 package model
 
-import (
-	"time"
-)
+import "github.com/go-sql-driver/mysql"
 
-// Pessoa é alguém que participa em filmes
-// (atores, diretores, etc...)
 type Pessoa struct {
-	Nascimento    time.Time
+	Nome          string
+	Nascimento    mysql.NullTime
 	Imagens       []Imagem `gorm:"many2many:pessoa_imagem"`
-	Participacoes []Participante
+	Participacoes []Filme  `gorm:"many2many:pessoa_filme"`
 
 	ID uint
 }

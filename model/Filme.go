@@ -9,8 +9,8 @@ type Filme struct {
 	Sinopse string `gorm:"size:1024"`
 	Titulo  string
 
-	Participantes []Participante `gorm:"many2many:pessoa_filme"`
-	Tags          []Tag          `gorm:"many2many:filme_tag"`
+	Participantes []Pessoa `gorm:"many2many:pessoa_filme"`
+	Tags          []Tag    `gorm:"many2many:filme_tag"`
 	Imagens       []Imagem
 	Comentarios   []Comentario
 	Avaliacoes    []Avaliacao
@@ -28,7 +28,7 @@ func (filme *Filme) Load(db *gorm.DB) {
 	}
 
 	for i := 0; i < len(filme.Participantes); i++ {
-		filme.Participantes[i].Load(db)
+		// filme.Participantes[i].Load(db)
 	}
 }
 
