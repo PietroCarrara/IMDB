@@ -28,7 +28,7 @@ func (filme *Filme) Load(db *gorm.DB) {
 	}
 
 	for i := 0; i < len(filme.Participantes); i++ {
-		// filme.Participantes[i].Load(db)
+		filme.Participantes[i].Load(db)
 	}
 }
 
