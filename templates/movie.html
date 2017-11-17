@@ -151,7 +151,7 @@
             <div class="card-body" >
 
               {{ #Participantes }}
-              <p> <img src="{{ProfilePic.Caminho}}" /> {{ Nome }} </p>
+              <a href="/pessoa/{{ID}}"><p> <img src="{{ProfilePic.Caminho}}" /> {{ Nome }} </p></a>
               <hr>
               <!-- Feche o loop -->
               {{ /Participantes }}
