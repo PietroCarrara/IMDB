@@ -110,18 +110,30 @@ func setupRouter() *mux.Router {
 func home(w http.ResponseWriter, r *http.Request) {
 	filmes := []model.Filme{}
 	db.Find(&filmes, &model.Filme{})
-	model.LoadFilmeSlice(filmes, db)
+	for i := 0; i < len(filmes); i++ {
+		filmes[i].Load(db)
+	}
+
+	pessoas := []model.Pessoa{}
+	db.Find(&pessoas)
+	for i := 0; i < len(pessoas); i++ {
+		pessoas[i].Load(db)
+	}
 
 	var user *model.Usuario
 
-	logged := map[string]bool{}
+	options := map[string]interface{}{}
 
 	user = currentUser(w, r)
 	if user != nil {
-		logged["logged"] = true
+		options["user"] = user
+		options["logged"] = true
 	}
 
-	str, err := mustache.RenderFile("./templates/index.html", filmes, logged, user)
+	options["filmes"] = filmes
+	options["pessoas"] = pessoas
+
+	str, err := mustache.RenderFile("./templates/index.html", options)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -204,26 +216,33 @@ func busca(w http.ResponseWriter, r *http.Request) {
 	q := r.PostFormValue("q")
 
 	filmes := []model.Filme{}
-	db.Find(&filmes)
-
-	filmes = model.SearchFilmes(filmes, q)
+	db.Where("LOWER(titulo) LIKE LOWER(?)", "%"+q+"%").Find(&filmes)
 	model.LoadFilmeSlice(filmes, db)
 
-	var user *model.Usuario
-
-	logged := map[string]bool{}
-
-	user = currentUser(w, r)
-	if user != nil {
-		logged["logged"] = true
+	pessoas := []model.Pessoa{}
+	db.Where("LOWER(nome) LIKE ?", "%"+q+"%").Find(&pessoas)
+	for i := 0; i < len(pessoas); i++ {
+		pessoas[i].Load(db)
 	}
 
-	str, err := mustache.RenderFile("./templates/index.html", filmes, logged, user)
+	options := map[string]interface{}{}
+
+	user := currentUser(w, r)
+	if user != nil {
+		options["user"] = user
+		options["logged"] = true
+	}
+
+	options["filmes"] = filmes
+	options["pessoas"] = pessoas
+
+	str, err := mustache.RenderFile("./templates/index.html", options)
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
 
+	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(str))
 }
 
