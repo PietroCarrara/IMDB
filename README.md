@@ -5,32 +5,46 @@
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
-De um a dois parágrafos sobre o que é seu projeto e o que ele faz.
+O IMDB (Banco de Dados de Filmes da Internet) é um site dedicado a armazenar informações sobre filmes (desde atores, diretores, ... até avaliações de usuários).
 
-![](screenshots/header.png)
+Nele é possível pesquisar vários filmes, pessoas e usuários.
+
+![](screenshots/header.jpeg)
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ## Instalação
 
 Não precisa.
 
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 ## Exemplo de uso
 
 Essa é a página inicial!
 
-![](screenshots/header.png)
+![](screenshots/index.png)
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Você pode fazer login
 
 ![](screenshots/signin.png)
 
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 Ou você pode criar uma conta
 
 ![](screenshots/signup.png)
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Logado, agora você pode comentar ou avaliar, coisa que antes você só poderia ver
 À esquerda você pode ver as tags as quais o filme faz parte, e clicando nelas você pode ver uma lista de filmes que possuem as mesmas tags
 
 ![](screenshots/movie.png)
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ## Configuração para Desenvolvimento
 
@@ -39,6 +53,8 @@ Descreva como instalar todas as dependências para desenvolvimento e como rodar 
 ```sh
 git clone
 ```
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ## Histórico de lançamentos
 
