@@ -18,7 +18,7 @@
 
   <style>
     .profile {
-      max-width: 600px;
+      max-width: 300px;
       max-height: 300px;
     }
   </style>
@@ -118,7 +118,7 @@
             <hr> 
             {{ #person.Participacoes }}
             <a href="/movie/{{ID}}">
-              <p> {{ Titulo }} </p>
+              <p><img src="{{Banner.Caminho}}" class="profile"> {{ Titulo }} </p>
             </a>
             {{#user.IsAdmin}}
             <a href="/admin/delete/person/movie/{{person.ID}}/{{ID}}">

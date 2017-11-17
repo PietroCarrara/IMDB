@@ -30,4 +30,8 @@ func (p Pessoa) Nasc() string {
 // a partir do banco de dados
 func (p *Pessoa) Load(db *gorm.DB) {
 	db.Preload("Imagens").Preload("Participacoes").First(p)
+
+	for i := 0; i < len(p.Participacoes); i++ {
+		db.Preload("Imagens").First(&p.Participacoes[i])
+	}
 }
