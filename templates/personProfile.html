@@ -108,7 +108,10 @@
             Participou dos Filmes
           </div>
           <div class="card-body">
-
+            {{#user.IsAdmin}}
+            <a href="/admin/insert/person/{{person.ID}}">Adicionar Participação</a>
+            {{/user.IsAdmin}}
+            <hr>
             {{ #person.Participacoes }}
             <a href="/movie/{{ID}}"><p> {{ Titulo }} </p></a>
             <hr>
