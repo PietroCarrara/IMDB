@@ -43,6 +43,7 @@ Logado, agora você pode comentar ou avaliar, coisa que antes você só poderia 
 À esquerda você pode ver as tags as quais o filme faz parte, e clicando nelas você pode ver uma lista de filmes que possuem as mesmas tags
 
 ![](screenshots/movie.png)
+![](screenshots/movie2.png)
 
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
