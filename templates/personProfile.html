@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8">
-</head>
-
-<body>
-
   <!DOCTYPE html>
   <html>
 
@@ -15,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>IMDb - {{ Titulo }}</title>
+    <title>IMDb - {{ Nome }}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -94,30 +85,35 @@
         <div class="col-lg-9">
 
           <div class="card mt-4">
-            <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
-            <ol class="carousel-indicators">
-              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner" role="listbox">
+            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+              <!-- Indicators -->
+              <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+              </ol>
+
               {{ #Imagens }}
-              <div class="carousel-item active">
-                <img class="d-block img-fluid" src="{{ Link da imagem que eu não sei daí }}" alt="First slide">
-              </div>
-              {{ /Imagens }}
-            </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
+              <!-- Wrapper for slides -->
+              <div class="carousel-inner">
+                <div class="item">
+                  <img src="{{ Imagem.Caminho }}">
+                </div>
+
+                {{ /Imagens }}
+
+              <!-- Left and right controls -->
+              <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="sr-only">Next</span>
+              </a>
             </div>
             <div class="card-body">
-              <p class="card-text"> Este(a) é {{ Nome }}, nasceu em {{ Nascimento }} </p>
+              <p class="card-text"> Este(a) é {{ Nome }}, nasceu em {{ Nascimento }}. </p>
             </div>
           </div>
           <!-- /.card -->
