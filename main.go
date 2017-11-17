@@ -90,6 +90,8 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/admin/insert/person", insPessoaPage).Methods("GET")
 	r.HandleFunc("/admin/insert/person", insPessoa).Methods("POST")
+	r.HandleFunc("/admin/insert/person/{idPessoa}", addMoviePersonPage).Methods("GET")
+	r.HandleFunc("/admin/insert/person/{idPessoa}/{idFilme}", addMoviePerson).Methods("GET")
 	r.HandleFunc("/admin/toggle/{id}", toggleAdmin)
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
@@ -277,6 +279,34 @@ func insPessoaPage(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(str))
 }
 
+func addMoviePersonPage(w http.ResponseWriter, r *http.Request) {
+	filmes := []model.Filme{}
+	db.Find(&filmes, &model.Filme{})
+	model.LoadFilmeSlice(filmes, db)
+
+	var user *model.Usuario
+
+	options := map[string]interface{}{}
+
+	user = currentUser(w, r)
+	if user != nil {
+		options["user"] = user
+		options["logged"] = true
+	}
+
+	options["filmes"] = filmes
+	options["personID"] = mux.Vars(r)["idPessoa"]
+
+	str, err := mustache.RenderFile("./templates/movieSelect.html", options)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(str))
+}
+
 func insFilmePage(w http.ResponseWriter, r *http.Request) {
 	options := map[string]interface{}{}
 
@@ -332,6 +362,28 @@ func insPessoa(w http.ResponseWriter, r *http.Request) {
 	foto.Caminho = name
 
 	db.Save(&foto)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func addMoviePerson(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	idPessoa, _ := strconv.ParseUint(vars["idPessoa"], 10, 0)
+	idFilme, _ := strconv.ParseUint(vars["idFilme"], 10, 0)
+
+	pessoa := model.Pessoa{ID: uint(idPessoa)}
+	filme := model.Filme{ID: uint(idFilme)}
+
+	db.First(&filme)
+	filme.Load(db)
+
+	db.First(&pessoa)
+	pessoa.Load(db)
+
+	filme.Participantes = append(filme.Participantes, pessoa)
+
+	db.Save(&filme)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
