@@ -85,7 +85,7 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/movie/{id}/rate", avaliar)
 	r.HandleFunc("/movie/{id}/comment", comentar)
 	r.HandleFunc("/movie/{id}/tag-add", addTag)
-	r.HandleFunc("/movie/{id}/watchlist-add", addWatch)
+	r.HandleFunc("/movie/{id}/watchlist-toggle", watchToggle)
 	r.HandleFunc("/busca", busca)
 	r.HandleFunc("/admin", admin)
 	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
@@ -145,16 +145,17 @@ func filme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var filme model.Filme
+	db.Where(model.Filme{ID: uint(id)}).First(&filme)
+	filme.Load(db)
+
 	var user *model.Usuario
 
 	user = currentUser(w, r)
 	if user != nil {
 		options["logged"] = true
+		options["onWatch"] = user.IsOnWatchlist(filme)
 	}
-
-	var filme model.Filme
-	db.Where(model.Filme{ID: uint(id)}).First(&filme)
-	filme.Load(db)
 
 	sla, err := mustache.RenderFile("./templates/movie.html", filme, user, options)
 	if err != nil {
@@ -486,7 +487,7 @@ func addTag(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func addWatch(w http.ResponseWriter, r *http.Request) {
+func watchToggle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	idStr := vars["id"]
@@ -501,9 +502,15 @@ func addWatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Watchlist = append(user.Watchlist, filme)
+	if user.IsOnWatchlist(filme) {
+		db.Model(&user).Association("Watchlist").Delete(&filme)
+	} else {
+		user.Watchlist = append(user.Watchlist, filme)
+	}
 
 	db.Save(&user)
+
+	http.Redirect(w, r, "/movie/"+idStr, http.StatusSeeOther)
 }
 
 func loginPage(w http.ResponseWriter, r *http.Request) {

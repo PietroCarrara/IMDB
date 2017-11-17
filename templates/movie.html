@@ -118,6 +118,14 @@
             <img class="card-img-top img-fluid" src="{{ Banner.Caminho }}" alt="">
             <div class="card-body">
               <p class="card-text"> {{ Sinopse }} </p>
+              <p>
+                {{#onWatch}}
+                  <a href="/movie/{{ID}}/watchlist-toggle">Remover da watchlist</a>
+                {{/onWatch}}
+                {{^onWatch}}
+                  <a href="/movie/{{ID}}/watchlist-toggle">Adicionar na watchlist</a>
+                {{/onWatch}}
+              </p>
               <form action="JavaScript:avaliar()">
                 <select name="nota" id="aval">
                   <option value="1">1</option>

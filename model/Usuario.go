@@ -41,6 +41,29 @@ type Avaliacao struct {
 	ID        uint
 }
 
+// IsOnWatchlist diz se o filme
+// está ou não na watchlist do usuario
+func (u Usuario) IsOnWatchlist(f Filme) bool {
+	for _, filme := range u.Watchlist {
+		if filme.ID == f.ID {
+			return true
+		}
+	}
+
+	return false
+}
+
+// Remove remove um
+// filme da watchlist
+func (u Usuario) Remove(f Filme) {
+	for i, filme := range u.Watchlist {
+		if filme.ID == f.ID {
+			u.Watchlist = append(u.Watchlist[:i], u.Watchlist[i+1:]...)
+			return
+		}
+	}
+}
+
 // Load carrega o usuário
 // a partir do banco de dados
 func (user *Usuario) Load(db *gorm.DB) {
