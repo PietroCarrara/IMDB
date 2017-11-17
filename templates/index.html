@@ -107,7 +107,7 @@
                 <p class="card-text">{{ Sinopse }}</p>
               </div>
               <div class="card-footer">
-                <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734; ({{ Nota }} Estrelas) </small>
+                <small class="text-muted" id="movie-{{ID}}"></small>
               </div>
             </div>
           </div>
@@ -150,6 +150,20 @@
   <!-- Bootstrap core JavaScript -->
   <script src="/vendor/jquery/jquery.min.js"></script>
   <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  {{#filmes}}
+  <script>
+      var n = {{Nota}};
+      var stars = '';
+      for (var i = 0; i < n; i++) {
+        stars += '★'
+      }
+      for (var i = 5; i > n; i--) {
+        stars += '☆'
+      }
+      $("#movie-{{ID}}").text(stars + ' ({{Nota}} Estrelas)')
+    </script>
+  {{/filmes}}
 
 </body>
 
