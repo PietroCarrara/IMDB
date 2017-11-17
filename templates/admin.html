@@ -18,62 +18,65 @@
 
 <body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="/">IMDb</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                
-                <li class="nav-item active">
-                    {{ #logged }}
-                    <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
-                    {{ #user.IsAdmin }}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">IMDb</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                      <a class="nav-link" href="/admin">Painel Admin</a>
+                        <a class="nav-link" href="/">Home</a>
                     </li>
-                    {{ /user.IsAdmin }}
-                    {{ /logged }}
-                    {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
-                </li>
-                <li class="nav-item">
-                    {{ #logged }}
-                    <a class="nav-link" href="/logout"> Logout </a>
-                    {{ /logged }}
-                </li>
-            </ul>
+
+                    <li class="nav-item active">
+                        {{ #logged }}
+                        <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
+                        {{ #user.IsAdmin }}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">Painel Admin</a>
+                        </li>
+                        {{ /user.IsAdmin }} {{ /logged }} {{ ^logged }}
+                        <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
+                    </li>
+                    <li class="nav-item">
+                        {{ #logged }}
+                        <a class="nav-link" href="/logout"> Logout </a>
+                        {{ /logged }}
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
-<!-- End Navigation -->
+    </nav>
+    <!-- End Navigation -->
 
-<!-- Page Content -->
-<div class="container">
+    <!-- Page Content -->
+    <div class="container">
 
-    <div class="row">
-        <div class="col-lg-9">
+        <div class="row">
+            <div class="col-lg-9">
 
-            <h1 class="my-4 text-center text-lg-left">Ações de admin:</h1>
+                <h1 class="my-4 text-center text-lg-left">Ações de admin:</h1>
 
-            <div class="row text-center text-lg-left">
+                <div class="row text-center text-lg-left">
 
-                <div class="col-lg-9 col-md-4 col-xs-6">
+                    <div class="col-lg-9 col-md-4 col-xs-6">
 
-                    <div class="card card-outline-secondary my-4">
-                      <a href="/admin/insert/movie" class="btn btn-danger btn-lg" role="button">
-                                                      <br>Inserir Filme</a>
-                    </div>
-                    <div class="card card-outline-secondary my-4">
-                      <a href="/admin/insert/person" class="btn btn-danger btn-lg" role="button">
-                                                      <br>Inserir Pessoa</a>
-                    </div>
+                        <div class="card card-outline-secondary my-4">
+                            <a href="/admin/insert/movie" class="btn btn-danger btn-lg" role="button">
+                                <br>Inserir Filme</a>
+                        </div>
+                        <div class="card card-outline-secondary my-4">
+                            <a href="/admin/insert/person" class="btn btn-danger btn-lg" role="button">
+                                <br>Inserir Pessoa</a>
+                        </div>
+                        <div class="card card-outline-secondary my-4">
+                            <a href="/admin/insert/tag" class="btn btn-danger btn-lg" role="button">
+                                <br>Inserir Tag</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,8 +87,8 @@
     <!-- Footer -->
     <footer class="py-5 bg-dark">
         <div class="container">
-            <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights
-                Reserved.</p>
+            <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.
+            </p>
         </div>
         <!-- /.container -->
     </footer>

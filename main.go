@@ -91,6 +91,8 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/admin/insert/person", insPessoaPage).Methods("GET")
 	r.HandleFunc("/admin/insert/person", insPessoa).Methods("POST")
+	r.HandleFunc("/admin/insert/tag", insTagPage).Methods("GET")
+	r.HandleFunc("/admin/insert/tag", insTag).Methods("POST")
 	r.HandleFunc("/admin/insert/person/{idPessoa}", addMoviePersonPage).Methods("GET")
 	r.HandleFunc("/admin/insert/person/{idPessoa}/{idFilme}", addMoviePerson).Methods("GET")
 	r.HandleFunc("/admin/delete/person/movie/{idPessoa}/{idFilme}", deletePessoaFilme)
@@ -368,6 +370,23 @@ func addMoviePersonPage(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(str))
 }
 
+func insTagPage(w http.ResponseWriter, r *http.Request) {
+	options := map[string]interface{}{}
+
+	usr := currentUser(w, r)
+	if usr == nil || !usr.IsAdmin {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	options["logged"] = true
+	options["user"] = usr
+
+	str, _ := mustache.RenderFile("./templates/tagInsert.html", options)
+
+	w.Write([]byte(str))
+}
+
 func insFilmePage(w http.ResponseWriter, r *http.Request) {
 	options := map[string]interface{}{}
 
@@ -443,6 +462,16 @@ func insPessoa(w http.ResponseWriter, r *http.Request) {
 	foto.Caminho = name
 
 	db.Save(&foto)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func insTag(w http.ResponseWriter, r *http.Request) {
+
+	nome := r.PostFormValue("tag")
+
+	tag := model.Tag{Titulo: nome}
+	db.Where(&tag).FirstOrCreate(&tag)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
