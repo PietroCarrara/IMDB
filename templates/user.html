@@ -90,7 +90,7 @@
                         {{ #target.Avaliacoes }}
                         <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
                         <p> {{ Nota }}/5 </p>
-                        <small class="text-muted">{{ Filme.Titulo }}</small>
+                        <a href="/movie/{{FilmeID}}">{{ Filme.Titulo }}</a>
                         <hr>
                         <!-- Feche o loop -->
                         {{ /target.Avaliacoes }}
