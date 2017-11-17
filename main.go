@@ -462,9 +462,11 @@ func insPessoa(w http.ResponseWriter, r *http.Request) {
 
 	nasc := mysql.NullTime{Time: t, Valid: true}
 
+	fmt.Println(nasc.Time)
+
 	pessoa := model.Pessoa{Nome: nome, Nascimento: nasc}
 
-	db.Save(&pessoa)
+	db.Create(&pessoa)
 
 	pic, _, err := r.FormFile("pic")
 	if err != nil {
@@ -473,7 +475,7 @@ func insPessoa(w http.ResponseWriter, r *http.Request) {
 	foto := model.Imagem{}
 	foto.Pessoas = append(foto.Pessoas, pessoa)
 
-	db.Save(&foto)
+	db.Create(&foto)
 
 	name := fmt.Sprintf("/uploads/upload%d", foto.ID)
 

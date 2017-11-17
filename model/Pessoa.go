@@ -7,9 +7,9 @@ import (
 
 type Pessoa struct {
 	Nome          string
-	Nascimento    mysql.NullTime
-	Imagens       []Imagem `gorm:"many2many:pessoa_imagem"`
-	Participacoes []Filme  `gorm:"many2many:pessoa_filme"`
+	Nascimento    mysql.NullTime `gorm:"type:date"`
+	Imagens       []Imagem       `gorm:"many2many:pessoa_imagem"`
+	Participacoes []Filme        `gorm:"many2many:pessoa_filme"`
 
 	ID uint
 }
@@ -23,7 +23,7 @@ func (p Pessoa) ProfilePic() Imagem {
 // Nasc formata a data de
 // nascimento de uma pessoa
 func (p Pessoa) Nasc() string {
-	return p.Nascimento.Time.Format("01/02/2006 ")
+	return p.Nascimento.Time.Format("02/01/2006 ")
 }
 
 // Load carrega a pessoa
