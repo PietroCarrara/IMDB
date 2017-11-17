@@ -63,20 +63,7 @@
     <div class="row">
         <div class="col-lg-9">
 
-            <h1 class="my-4 text-center text-lg-left">Ações de {{target.Nome}}:</h1>
-
-            <p id="sys-adm">
-            {{#target.IsAdmin}}
-                Administrador do sistema
-            {{/target.IsAdmin}}
-            </p>
-
-
-            {{#logged}}
-            {{#user.IsAdmin}}
-                <a href="#" onclick="toggleAdmin()">Conceder/Revogar admin</a>
-            {{/user.IsAdmin}}
-            {{/logged}}
+            <h1 class="my-4 text-center text-lg-left">Ações de admin:</h1>
 
             <div class="row text-center text-lg-left">
 
@@ -109,18 +96,6 @@
     <!-- Bootstrap core JavaScript -->
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function toggleAdmin() {
-            $.get("/admin/toggle/{{target.ID}}",
-            function(data) {
-                if(data == 'true') {
-                    $('#sys-adm').text('Administrador do sistema')
-                } else {
-                    $('#sys-adm').text('')
-                }
-            });
-        }
-    </script>
 
 </body>
 
