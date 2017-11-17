@@ -61,88 +61,88 @@
     <div class="container">
 
         <div class="row">
-            <div class="col-lg-9">
+            <h1 class="my-4 text-center text-lg-left">Ações de {{target.Nome}}:</h1>
+        </div>
 
-                <h1 class="my-4 text-center text-lg-left">Ações de {{target.Nome}}:</h1>
+        <div class="row">
+            <p id="sys-adm">
+                {{#target.IsAdmin}} Administrador do sistema {{/target.IsAdmin}}
+            </p>
+        </div>
 
-                <p id="sys-adm">
-                    {{#target.IsAdmin}} Administrador do sistema {{/target.IsAdmin}}
-                </p>
-
-
-                {{#logged}} {{#user.IsAdmin}}
-                <a href="#" onclick="toggleAdmin()">Conceder/Revogar admin</a>
-                {{/user.IsAdmin}} {{/logged}}
-
-                <div class="row text-center text-lg-left">
-
-                    <div class="col-lg-9 col-md-4 col-xs-6">
-
-                        <div class="card card-outline-secondary my-4">
-
-                            <div class="card-header">
-                                Avaliações
-                            </div>
-
-                            <div class="card-body" id="comment-box">
-
-                                <!-- Percorra o vetor de comentários -->
-                                {{ #target.Avaliacoes }}
-                                <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
-                                <p> {{ Nota }}/5 </p>
-                                <small class="text-muted">{{ Filme.Titulo }}</small>
-                                <hr>
-                                <!-- Feche o loop -->
-                                {{ /target.Avaliacoes }}
-                            </div>
-
-                        </div>
+        <div class="row">
+            {{#logged}} {{#user.IsAdmin}}
+            <a href="#" onclick="toggleAdmin()">Conceder/Revogar admin</a>
+            {{/user.IsAdmin}} {{/logged}}
+        </div>
 
 
-                        <div class="card card-outline-secondary my-4">
+        <div class="row">
 
-                            <div class="card-header">
-                                Comentários
-                            </div>
+            <div class="col-lg-9 col-md-4 col-xs-6">
 
-                            <div class="card-body" id="comment-box">
+                <div class="card card-outline-secondary my-4">
 
-                                <!-- Percorra o vetor de comentários -->
-                                {{ #target.Comentarios }}
-                                <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
-                                <p> {{ Conteudo }} </p>
-                                <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
-                                <small class="text-muted"> {{ Usuario.Nome }} >
-                                    <a href="/movie/{{FilmeID}}">{{ Filme.Titulo }}</a>
-                                </small>
-                                <hr>
-                                <!-- Feche o loop -->
-                                {{ /target.Comentarios }}
-                            </div>
+                    <div class="card-header">
+                        Avaliações
+                    </div>
 
-                        </div>
+                    <div class="card-body" id="comment-box">
 
-                        {{#target.Watchlist}}
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="/movie/{{ ID }}">
-                                    <img class="card-img-top" src="{{ Banner.Caminho }}" alt="">
-                                </a>
-                                <div class="card-body">
-                                    <h4 class="card-title">
-                                        <a href="/movie/{{ ID }}"> {{ Titulo }} </a>
-                                    </h4>
-                                    <p class="card-text">{{ Sinopse }}</p>
-                                </div>
-                                <div class="card-footer">
-                                    <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734; ({{ Nota }} Estrelas) </small>
-                                </div>
-                            </div>
-                        </div>
-                        {{/target.Watchlist}}
+                        <!-- Percorra o vetor de comentários -->
+                        {{ #target.Avaliacoes }}
+                        <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
+                        <p> {{ Nota }}/5 </p>
+                        <small class="text-muted">{{ Filme.Titulo }}</small>
+                        <hr>
+                        <!-- Feche o loop -->
+                        {{ /target.Avaliacoes }}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card card-outline-secondary my-4">
+
+                <div class="card-header">
+                    Comentários
+                </div>
+
+                <div class="card-body" id="comment-box">
+
+                    <!-- Percorra o vetor de comentários -->
+                    {{ #target.Comentarios }}
+                    <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
+                    <p> {{ Conteudo }} </p>
+                    <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
+                    <small class="text-muted"> {{ Usuario.Nome }} >
+                        <a href="/movie/{{FilmeID}}">{{ Filme.Titulo }}</a>
+                    </small>
+                    <hr>
+                    <!-- Feche o loop -->
+                    {{ /target.Comentarios }}
+                </div>
+
+            </div>
+
+            {{#target.Watchlist}}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100">
+                    <a href="/movie/{{ ID }}">
+                        <img class="card-img-top" src="{{ Banner.Caminho }}" alt="">
+                    </a>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            <a href="/movie/{{ ID }}"> {{ Titulo }} </a>
+                        </h4>
+                        <p class="card-text">{{ Sinopse }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734; ({{ Nota }} Estrelas) </small>
                     </div>
                 </div>
             </div>
+            {{/target.Watchlist}}
         </div>
         <!-- /.container -->
 
