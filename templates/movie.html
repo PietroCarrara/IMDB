@@ -15,7 +15,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>IMDb - {{ Titulo }}</title>
+    <title>IMDb - {{ filme.Titulo }}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -64,12 +64,12 @@
             <li class="nav-item">
               <!-- Logado -->
               {{ #logged }}
-              <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
-              {{ #IsAdmin }}
+              <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
+              {{ #user.IsAdmin }}
               <li class="nav-item">
                 <a class="nav-link" href="/admin">Painel Admin</a>
               </li>
-              {{ /IsAdmin }}
+              {{ /user.IsAdmin }}
               {{ /logged }}
               <!-- Não Logado -->
               {{ ^logged }}
@@ -94,13 +94,18 @@
         <div class="col-lg-3">
           <h1 class="my-4">{{ Titulo }}</h1>
           <div class="list-group" id="tags">
-            {{#Tags}}
+            {{#filme.Tags}}
 
-            <a href="/tags/{{ Titulo }}" class="list-group-item">{{ Titulo }}</a>
+            <div class="list-group-item">
+            <a href="/tags/{{ Titulo }}" >{{ Titulo }}</a>
 
-            {{/Tags}}
+            {{#logged}} {{#user.IsAdmin}}
+              <a href="/admin/delete/movie/tag/{{filme.ID}}/{{Titulo}}" >(Deletar)</a>
+            {{/user.IsAdmin}} {{/logged}} 
+            </div>
+            {{/filme.Tags}}
           </div>
-          {{#logged}} {{#IsAdmin}}
+          {{#logged}} {{#user.IsAdmin}}
           <form action="JavaScript:adicionarTag()">
             <select id="tagAdd">
               {{#alltags}}
@@ -109,21 +114,21 @@
               <input type="submit" value="Adicionar">
             </select>
           </form>
-          {{/IsAdmin}} {{/logged}}
+          {{/user.IsAdmin}} {{/logged}}
         </div>
         <!-- /.col-lg-3 -->
 
         <div class="col-lg-9">
 
           <div class="card mt-4">
-            <img class="card-img-top img-fluid" src="{{ Banner.Caminho }}" alt="">
+            <img class="card-img-top img-fluid" src="{{ filme.Banner.Caminho }}" alt="">
             <div class="card-body">
               <p class="card-text"> {{ Sinopse }} </p>
               <p>
                 {{#onWatch}}
-                <a href="/movie/{{ID}}/watchlist-toggle">Remover da watchlist</a>
+                <a href="/movie/{{filme.ID}}/watchlist-toggle">Remover da watchlist</a>
                 {{/onWatch}} {{^onWatch}}
-                <a href="/movie/{{ID}}/watchlist-toggle">Adicionar na watchlist</a>
+                <a href="/movie/{{filme.ID}}/watchlist-toggle">Adicionar na watchlist</a>
                 {{/onWatch}}
               </p>
               <form action="JavaScript:avaliar()">
@@ -150,14 +155,14 @@
             </div>
             <div class="card-body">
 
-              {{ #Participantes }}
+              {{ #filme.Participantes }}
               <a href="/pessoa/{{ID}}">
                 <p>
                   <img src="{{ProfilePic.Caminho}}" class="profile"/> {{ Nome }} </p>
               </a>
               <hr>
               <!-- Feche o loop -->
-              {{ /Participantes }}
+              {{ /filme.Participantes }}
             </div>
 
             <div class="card card-outline-secondary my-4">
@@ -167,7 +172,7 @@
               <div class="card-body" id="comment-box">
 
                 <!-- Percorra o vetor de comentários -->
-                {{ #Comentarios }}
+                {{ #filme.Comentarios }}
                 <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
                 <p> {{ Conteudo }} </p>
                 <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
@@ -176,7 +181,7 @@
                 </small>
                 <hr>
                 <!-- Feche o loop -->
-                {{ /Comentarios }}
+                {{ /filme.Comentarios }}
               </div>
 
               <form id="comentario" action="JavaScript:comentar()">
@@ -209,11 +214,11 @@
 
       <script>
         function comentar() {
-          $.post("/movie/{{ID}}/comment", $("#com").val())
+          $.post("/movie/{{filme.ID}}/comment", $("#com").val())
             .done(function (comentario) {
               $("#comment-box")
                 .append('<p>' + comentario +
-                  '</p><small class="text-muted"> Postado por <a href="/user/{{Nome}}">{{ Nome }}</a> </small><hr>');
+                  '</p><small class="text-muted"> Postado por <a href="/user/{{user.Nome}}">{{ user.Nome }}</a> </small><hr>');
 
               $('#com').val('');
             });
@@ -231,21 +236,17 @@
         }
 
         function adicionarTag() {
-          $.post("/movie/{{ID}}/tag-add", $("#tagAdd").val())
+          $.post("/movie/{{filme.ID}}/tag-add", $("#tagAdd").val())
             .done(
               function (tag) {
                 if (tag != '') {
-                  $("#tags").append('<a href="/tags/' + tag + '" class="list-group-item">' + tag + '</a>')
+                  $("#tags").append('<div class="list-group-item"><a href="/tags/' + tag + '" >' + tag + '</a>{{#logged}} {{#user.IsAdmin}}<a href="/admin/delete/movie/tag/{{filme.ID}}/'+tag+'" >(Deletar)</a>{{/user.IsAdmin}} {{/logged}} </div>')
                 }
               }
             )
         }
 
-        makeStars({
-          {
-            Nota
-          }
-        })
+        makeStars({{filme.Nota}})
       </script>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

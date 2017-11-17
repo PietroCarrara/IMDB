@@ -96,6 +96,7 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/admin/insert/person/{idPessoa}", addMoviePersonPage).Methods("GET")
 	r.HandleFunc("/admin/insert/person/{idPessoa}/{idFilme}", addMoviePerson).Methods("GET")
 	r.HandleFunc("/admin/delete/person/movie/{idPessoa}/{idFilme}", deletePessoaFilme)
+	r.HandleFunc("/admin/delete/movie/tag/{idFilme}/{nomeTag}", deleteTagFilme)
 	r.HandleFunc("/admin/toggle/{id}", toggleAdmin)
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
@@ -167,11 +168,14 @@ func filme(w http.ResponseWriter, r *http.Request) {
 
 	user = currentUser(w, r)
 	if user != nil {
+		options["user"] = user
 		options["logged"] = true
 		options["onWatch"] = user.IsOnWatchlist(filme)
 	}
 
-	sla, err := mustache.RenderFile("./templates/movie.html", filme, user, options)
+	options["filme"] = filme
+
+	sla, err := mustache.RenderFile("./templates/movie.html", options)
 	if err != nil {
 		log.Print(err)
 		return
@@ -298,6 +302,8 @@ func admin(w http.ResponseWriter, r *http.Request) {
 
 func tag(w http.ResponseWriter, r *http.Request) {
 
+	options := map[string]interface{}{}
+
 	vars := mux.Vars(r)
 
 	var tag model.Tag
@@ -306,16 +312,15 @@ func tag(w http.ResponseWriter, r *http.Request) {
 
 	model.LoadFilmeSlice(tag.Filmes, db)
 
-	var user *model.Usuario
-
-	logged := map[string]bool{}
-
-	user = currentUser(w, r)
+	user := currentUser(w, r)
 	if user != nil {
-		logged["logged"] = true
+		options["logged"] = true
+		options["user"] = user
 	}
 
-	str, err := mustache.RenderFile("./templates/index.html", tag.Filmes, logged, user)
+	options["filmes"] = tag.Filmes
+
+	str, err := mustache.RenderFile("./templates/index.html", options)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -402,6 +407,26 @@ func insFilmePage(w http.ResponseWriter, r *http.Request) {
 	str, _ := mustache.RenderFile("./templates/movieInsert.html", options)
 
 	w.Write([]byte(str))
+}
+
+func deleteTagFilme(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	idTag, _ := vars["nomeTag"]
+	idFilme, _ := strconv.ParseUint(vars["idFilme"], 10, 0)
+
+	tag := model.Tag{Titulo: idTag}
+	filme := model.Filme{ID: uint(idFilme)}
+
+	db.First(&filme)
+	filme.Load(db)
+
+	db.Where(&tag).First(&tag)
+	tag.Load(db)
+
+	db.Model(&tag).Association("Filmes").Delete(&filme)
+
+	http.Redirect(w, r, "/movie/"+vars["idFilme"], http.StatusSeeOther)
 }
 
 func deletePessoaFilme(w http.ResponseWriter, r *http.Request) {
