@@ -9,27 +9,17 @@
     <title>IMDb - Admin</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../static/css/thumbnail-gallery.css" rel="stylesheet">
+    <link href="/css/thumbnail-gallery.css" rel="stylesheet">
 
 </head>
 
 <body>
 
 <!-- Navigation -->
-<nav class="navbar navbar-expand<li class="nav-item active">
-                    {{ #logged }}
-                    <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
-                    {{ /logged }}
-                    {{ ^logged }} <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
-                </li>
-                <li class="nav-item">
-                    {{ #logged }}
-                    <a class="nav-link" href="/logout"> Logout </a>
-                    {{ /logged }}
-                </li>-lg navbar-dark bg-dark fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/">IMDb</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
@@ -87,24 +77,23 @@
                 <a href="#" onclick="toggleAdmin()">Conceder/Revogar admin</a>
             {{/user.IsAdmin}}
             {{/logged}}
-        </div>
 
-        <div class="panel panel-primary" >
-           <div class="panel-heading">
-               <h3 class="panel-title" >
-                   <span class="glyphicon glyphicon-bookmark"></span> Ações do admin: </h3>
-           </div>
-           <div class="panel-body">
-               <div class="row">
-                   <div class="col-xs-6 col-md-6">
-                     <a href="/admin/insert/movie" class="btn btn-danger btn-lg" role="button"><span class="glyphicon icon-film"></span> <br/>Inserir Filme</a>
-                   </div>
-                   <div class="col-xs-6 col-md-6">
-                     <a href="/admin/insert/person" class="btn btn-warning btn-lg" role="button"><span class="glyphicon glyphicon-user"></span> <br/>Inserir ator ou atriz</a>
-                   </div>
-               </div>
-           </div>
-       </div>
+            <div class="row text-center text-lg-left">
+
+                <div class="col-lg-9 col-md-4 col-xs-6">
+
+                    <div class="card card-outline-secondary my-4">
+                      <a href="/admin/insert/movie" class="btn btn-danger btn-lg" role="button">
+                                                      <br>Inserir Filme</a>
+                    </div>
+                    <div class="card card-outline-secondary my-4">
+                      <a href="/admin/insert/person" class="btn btn-danger btn-lg" role="button">
+                                                      <br>Inserir Pessoa</a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- /.container -->
 
