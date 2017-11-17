@@ -124,6 +124,7 @@
             <img class="card-img-top img-fluid" src="{{ filme.Banner.Caminho }}" alt="">
             <div class="card-body">
               <p class="card-text"> {{ Sinopse }} </p>
+              {{#logged}}
               <p>
                 {{#onWatch}}
                 <a href="/movie/{{filme.ID}}/watchlist-toggle">Remover da watchlist</a>
@@ -141,9 +142,10 @@
                 </select>
                 <input type="submit" value="Avaliar">
               </form>
+              {{/logged}}              
               <span class="text-warning" id="stars">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
               <p id="estrelas">
-                {{ Nota }} Estrelas
+                {{ filme.Nota }} Estrelas
               </p>
             </div>
           </div>
@@ -184,10 +186,13 @@
                 {{ /filme.Comentarios }}
               </div>
 
+              {{#logged}}
               <form id="comentario" action="JavaScript:comentar()">
                 <input type="text" name="conteudo" id="com" />
                 <span onclick="comentar();">Comentar</span>
               </form>
+              {{/logged}}
+              
             </div>
             <!-- /.card -->
 
