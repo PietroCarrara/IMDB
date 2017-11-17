@@ -85,7 +85,9 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/movie/{id}/rate", avaliar)
 	r.HandleFunc("/movie/{id}/comment", comentar)
 	r.HandleFunc("/movie/{id}/tag-add", addTag)
+	r.HandleFunc("/movie/{id}/watchlist-add", addWatch)
 	r.HandleFunc("/busca", busca)
+	r.HandleFunc("/admin", admin)
 	r.HandleFunc("/admin/insert/movie", insFilmePage).Methods("GET")
 	r.HandleFunc("/admin/insert/movie", insFilme).Methods("POST")
 	r.HandleFunc("/admin/insert/person", insPessoaPage).Methods("GET")
@@ -221,7 +223,6 @@ func busca(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(str))
 }
 
@@ -231,6 +232,46 @@ func pessoa(w http.ResponseWriter, r *http.Request) {
 
 	pessoa := model.Pessoa{ID: uint(id)}
 	db.First(&pessoa)
+	pessoa.Load(db)
+
+	options := map[string]interface{}{}
+
+	user := currentUser(w, r)
+	if user != nil {
+		options["user"] = user
+		options["logged"] = true
+	}
+
+	options["person"] = pessoa
+
+	str, _ := mustache.RenderFile("./templates/personProfile.html", options)
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(str))
+}
+
+func admin(w http.ResponseWriter, r *http.Request) {
+
+	options := map[string]interface{}{}
+
+	var user *model.Usuario
+
+	user = currentUser(w, r)
+	if user != nil && user.IsAdmin {
+		options["user"] = user
+		options["logged"] = true
+	} else {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
+	str, err := mustache.RenderFile("./templates/admin.html", options)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte(str))
 }
 
 func tag(w http.ResponseWriter, r *http.Request) {
@@ -385,7 +426,7 @@ func addMoviePerson(w http.ResponseWriter, r *http.Request) {
 
 	db.Save(&filme)
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/movie/"+vars["idFilme"], http.StatusSeeOther)
 }
 
 func insFilme(w http.ResponseWriter, r *http.Request) {
@@ -443,6 +484,26 @@ func addTag(w http.ResponseWriter, r *http.Request) {
 		db.Save(&filme)
 		w.Write([]byte(tag.Titulo))
 	}
+}
+
+func addWatch(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	idStr := vars["id"]
+	id, _ := strconv.ParseUint(idStr, 10, 0)
+
+	var filme model.Filme
+	db.Where(&model.Filme{ID: uint(id)}).First(&filme)
+	filme.Load(db)
+
+	user := currentUser(w, r)
+	if user == nil {
+		return
+	}
+
+	user.Watchlist = append(user.Watchlist, filme)
+
+	db.Save(&user)
 }
 
 func loginPage(w http.ResponseWriter, r *http.Request) {
