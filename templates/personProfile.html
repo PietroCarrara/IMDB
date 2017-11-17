@@ -15,7 +15,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>IMDb - {{ Titulo }}</title>
+    <title>IMDb - {{ person.Nome }}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
             <li class="nav-item">
               <!-- Logado -->
               {{ #logged }}
-              <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+              <a class="nav-link" href="/user/{{ Nome }}">{{ user.Nome }}</a>
               {{ /logged }}
               <!-- Não Logado -->
               {{ ^logged }}
@@ -74,50 +74,33 @@
 
       <div class="row">
 
-        <div class="col-lg-3">
-          <h1 class="my-4">{{ Nome }}</h1>
-          {{#logged}}
-            {{#IsAdmin}}
-            <form action="JavaScript:adicionarTag()">
-              <select id="tagAdd">
-              {{#alltags}}
-                <option value="{{Nome}}" >{{Nome}}</option>
-              {{/alltags}}
-              <input type="submit" value="Adicionar">
-              </select>
-            </form>
-            {{/IsAdmin}}
-          {{/logged}}
-        </div>
-        <!-- /.col-lg-3 -->
-
         <div class="col-lg-9">
 
           <div class="card mt-4">
             <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
-            <ol class="carousel-indicators">
-              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner" role="listbox">
-              {{ #Imagens }}
-              <div class="carousel-item active">
-                <img class="d-block img-fluid" src="{{ Link da imagem que eu não sei daí }}" alt="First slide">
+              <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+              </ol>
+              <div class="carousel-inner" role="listbox">
+                {{ #person.Imagens }}
+                <div class="carousel-item active">
+                  <img class="d-block img-fluid" src="{{ Caminho }}" alt="First slide">
+                </div>
+                {{ /person.Imagens }}
               </div>
-              {{ /Imagens }}
-            </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
+              <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
             </div>
             <div class="card-body">
-              <p class="card-text"> Este(a) é {{ Nome }}, nasceu em {{ Nascimento }} </p>
+              <p class="card-text"> Este(a) é {{ person.Nome }}, nasceu em {{ person.Nasc }} </p>
             </div>
           </div>
           <!-- /.card -->
@@ -126,39 +109,39 @@
             <div class="card-header">
               Participou dos Filmes
             </div>
-            <div class="card-body" >
+            <div class="card-body">
 
-              {{ #Participantes }}
-              <p> {{ Filme.Nome }} </p>
+              {{ #person.Participacoes }}
+              <p> {{ Titulo }} </p>
               <hr>
               <!-- Feche o loop -->
-              {{ /Participantes }}
+              {{ /person.Participacoes }}
             </div>
-          <!-- /.card -->
+            <!-- /.card -->
+
+          </div>
+          <!-- /.col-lg-9 -->
 
         </div>
-        <!-- /.col-lg-9 -->
 
       </div>
-
-    </div>
-    <!-- /.container -->
-
-    <footer class="py-5 bg-dark">
-      <div class="container">
-        <!-- Footer -->
-        <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
-      </div>
-
       <!-- /.container -->
-    </footer>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <footer class="py-5 bg-dark">
+        <div class="container">
+          <!-- Footer -->
+          <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
+        </div>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- /.container -->
+      </footer>
 
-</body>
+      <!-- Bootstrap core JavaScript -->
+      <script src="/vendor/jquery/jquery.min.js"></script>
+      <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</html>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  </body>
+
+  </html>

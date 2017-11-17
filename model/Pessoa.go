@@ -20,6 +20,12 @@ func (p Pessoa) ProfilePic() Imagem {
 	return p.Imagens[0]
 }
 
+// Nasc formata a data de
+// nascimento de uma pessoa
+func (p Pessoa) Nasc() string {
+	return p.Nascimento.Time.Format("01/02/2006 ")
+}
+
 // Load carrega a pessoa
 // a partir do banco de dados
 func (p *Pessoa) Load(db *gorm.DB) {
