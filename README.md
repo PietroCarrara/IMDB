@@ -39,7 +39,7 @@ Ou você pode criar uma conta
 
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Logado, agora você pode comentar ou avaliar, coisa que antes você só poderia ver
+Logado, agora você pode comentar ou avaliar, coisa que antes você só poderia ver.
 À esquerda você pode ver as tags as quais o filme faz parte, e clicando nelas você pode ver uma lista de filmes que possuem as mesmas tags
 
 ![](screenshots/movie.png)
@@ -51,7 +51,7 @@ Logado, agora você pode comentar ou avaliar, coisa que antes você só poderia 
 Descreva como instalar todas as dependências para desenvolvimento e como rodar um test-suite automatizado de algum tipo. Se necessário, faça isso para múltiplas plataformas.
 
 ```sh
-git clone
+git clone https://gitlab.com/rosso_pietro/IMDB.git
 ```
 
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
