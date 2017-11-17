@@ -16,6 +16,13 @@
   <!-- Custom styles for this template -->
   <link href="/css/shop-item.css" rel="stylesheet">
 
+  <style>
+    .profile {
+      max-width: 600px;
+      max-height: 300px;
+    }
+  </style>
+
 </head>
 
 <body>
@@ -33,19 +40,16 @@
           <li class="nav-item">
             <a class="nav-link" href="/">Home</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/noticias">Notícias</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies/em-breve">Em breve</a>
-          </li>
+          
           <li class="nav-item">
             <!-- Logado -->
             {{ #logged }}
             <a class="nav-link" href="/user/{{ Nome }}">{{ user.Nome }}</a>
+            {{ #user.IsAdmin }}
+            <li class="nav-item">
+              <a class="nav-link" href="/admin">Painel Admin</a>
+            </li>
+            {{ /user.IsAdmin }}
             {{ /logged }}
             <!-- Não Logado -->
             {{ ^logged }}
@@ -82,7 +86,7 @@
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
               <div class="item">
-                <img src="{{ Caminho }}">
+                <img src="{{ Caminho }}" class="profile">
               </div>
             </div>
             {{ /person.Imagens }}
@@ -111,9 +115,16 @@
             {{#user.IsAdmin}}
             <a href="/admin/insert/person/{{person.ID}}">Adicionar Participação</a>
             {{/user.IsAdmin}}
-            <hr>
+            <hr> 
             {{ #person.Participacoes }}
-            <a href="/movie/{{ID}}"><p> {{ Titulo }} </p></a>
+            <a href="/movie/{{ID}}">
+              <p> {{ Titulo }} </p>
+            </a>
+            {{#user.IsAdmin}}
+            <a href="/admin/delete/person/movie/{{person.ID}}/{{ID}}">
+              Deletar
+            </a>
+            {{/user.IsAdmin}}            
             <hr>
             <!-- Feche o loop -->
             {{ /person.Participacoes }}

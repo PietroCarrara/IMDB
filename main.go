@@ -26,7 +26,6 @@ var (
 	aaa         httpauth.Authorizer
 	roles       map[string]httpauth.Role
 	backendfile = "auth.leveldb"
-	port        = 8000
 )
 
 func main() {
@@ -94,6 +93,7 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/admin/insert/person", insPessoa).Methods("POST")
 	r.HandleFunc("/admin/insert/person/{idPessoa}", addMoviePersonPage).Methods("GET")
 	r.HandleFunc("/admin/insert/person/{idPessoa}/{idFilme}", addMoviePerson).Methods("GET")
+	r.HandleFunc("/admin/delete/person/movie/{idPessoa}/{idFilme}", deletePessoaFilme)
 	r.HandleFunc("/admin/toggle/{id}", toggleAdmin)
 	r.HandleFunc("/user/{nome}", usuario)
 	r.HandleFunc("/pessoa/{id}", pessoa)
@@ -383,6 +383,26 @@ func insFilmePage(w http.ResponseWriter, r *http.Request) {
 	str, _ := mustache.RenderFile("./templates/movieInsert.html", options)
 
 	w.Write([]byte(str))
+}
+
+func deletePessoaFilme(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	idPessoa, _ := strconv.ParseUint(vars["idPessoa"], 10, 0)
+	idFilme, _ := strconv.ParseUint(vars["idFilme"], 10, 0)
+
+	pessoa := model.Pessoa{ID: uint(idPessoa)}
+	filme := model.Filme{ID: uint(idFilme)}
+
+	db.First(&filme)
+	filme.Load(db)
+
+	db.First(&pessoa)
+	pessoa.Load(db)
+
+	db.Model(&pessoa).Association("Participacoes").Delete(&filme)
+
+	http.Redirect(w, r, "/pessoa/"+vars["idPessoa"], http.StatusSeeOther)
 }
 
 func insPessoa(w http.ResponseWriter, r *http.Request) {

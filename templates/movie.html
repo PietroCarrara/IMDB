@@ -27,15 +27,22 @@
       function makeStars(n) {
 
         var stars = '';
-        for(var i = 0; i < n; i++) {
+        for (var i = 0; i < n; i++) {
           stars += '★'
         }
-        for(var i = 5; i > n; i--) {
+        for (var i = 5; i > n; i--) {
           stars += '☆'
         }
         $("#stars").text(stars)
       }
     </script>
+
+    <style>
+      .profile {
+        max-width: 300px;
+        max-height: 150px;
+      }
+    </style>
 
   </head>
 
@@ -55,18 +62,14 @@
               <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/noticias">Notícias</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/movies/em-breve">Em breve</a>
-            </li>
-            <li class="nav-item">
               <!-- Logado -->
               {{ #logged }}
               <a class="nav-link" href="/user/{{ Nome }}">{{ Nome }}</a>
+              {{ #IsAdmin }}
+              <li class="nav-item">
+                <a class="nav-link" href="/admin">Painel Admin</a>
+              </li>
+              {{ /IsAdmin }}
               {{ /logged }}
               <!-- Não Logado -->
               {{ ^logged }}
@@ -93,22 +96,20 @@
           <div class="list-group" id="tags">
             {{#Tags}}
 
-              <a href="/tags/{{ Titulo }}" class="list-group-item">{{ Titulo }}</a>
+            <a href="/tags/{{ Titulo }}" class="list-group-item">{{ Titulo }}</a>
 
             {{/Tags}}
           </div>
-          {{#logged}}
-            {{#IsAdmin}}
-            <form action="JavaScript:adicionarTag()">
-              <select id="tagAdd">
+          {{#logged}} {{#IsAdmin}}
+          <form action="JavaScript:adicionarTag()">
+            <select id="tagAdd">
               {{#alltags}}
-                <option value="{{Titulo}}" >{{Titulo}}</option>
+              <option value="{{Titulo}}">{{Titulo}}</option>
               {{/alltags}}
               <input type="submit" value="Adicionar">
-              </select>
-            </form>
-            {{/IsAdmin}}
-          {{/logged}}
+            </select>
+          </form>
+          {{/IsAdmin}} {{/logged}}
         </div>
         <!-- /.col-lg-3 -->
 
@@ -120,10 +121,9 @@
               <p class="card-text"> {{ Sinopse }} </p>
               <p>
                 {{#onWatch}}
-                  <a href="/movie/{{ID}}/watchlist-toggle">Remover da watchlist</a>
-                {{/onWatch}}
-                {{^onWatch}}
-                  <a href="/movie/{{ID}}/watchlist-toggle">Adicionar na watchlist</a>
+                <a href="/movie/{{ID}}/watchlist-toggle">Remover da watchlist</a>
+                {{/onWatch}} {{^onWatch}}
+                <a href="/movie/{{ID}}/watchlist-toggle">Adicionar na watchlist</a>
                 {{/onWatch}}
               </p>
               <form action="JavaScript:avaliar()">
@@ -148,98 +148,108 @@
             <div class="card-header">
               Atores e Atrizes do Filme
             </div>
-            <div class="card-body" >
+            <div class="card-body">
 
               {{ #Participantes }}
-              <a href="/pessoa/{{ID}}"><p> <img src="{{ProfilePic.Caminho}}" /> {{ Nome }} </p></a>
+              <a href="/pessoa/{{ID}}">
+                <p>
+                  <img src="{{ProfilePic.Caminho}}" class="profile"/> {{ Nome }} </p>
+              </a>
               <hr>
               <!-- Feche o loop -->
               {{ /Participantes }}
             </div>
 
-          <div class="card card-outline-secondary my-4">
-            <div class="card-header">
-              Comentários do Filme
-            </div>
-            <div class="card-body" id="comment-box">
+            <div class="card card-outline-secondary my-4">
+              <div class="card-header">
+                Comentários do Filme
+              </div>
+              <div class="card-body" id="comment-box">
 
-              <!-- Percorra o vetor de comentários -->
-              {{ #Comentarios }}
-              <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
-              <p> {{ Conteudo }} </p>
-              <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
-              <small class="text-muted"> Postado por <a href="/user/{{Usuario.Nome}}">{{ Usuario.Nome }}</a></small>
-              <hr>
-              <!-- Feche o loop -->
-              {{ /Comentarios }}
-            </div>
+                <!-- Percorra o vetor de comentários -->
+                {{ #Comentarios }}
+                <!-- Já que estamos dentro do comentário, acesse seu conteúdo (Comentario.Conteudo) -->
+                <p> {{ Conteudo }} </p>
+                <!-- Todo comentário tem um usuário, então mostre seu nome (Comentario.Usuario.Nome) -->
+                <small class="text-muted"> Postado por
+                  <a href="/user/{{Usuario.Nome}}">{{ Usuario.Nome }}</a>
+                </small>
+                <hr>
+                <!-- Feche o loop -->
+                {{ /Comentarios }}
+              </div>
 
-            <form id="comentario" action="JavaScript:comentar()">
-              <input type="text" name="conteudo" id="com" />
-              <span onclick="comentar();">Comentar</span>
-            </form>
+              <form id="comentario" action="JavaScript:comentar()">
+                <input type="text" name="conteudo" id="com" />
+                <span onclick="comentar();">Comentar</span>
+              </form>
+            </div>
+            <!-- /.card -->
+
           </div>
-          <!-- /.card -->
+          <!-- /.col-lg-9 -->
 
         </div>
-        <!-- /.col-lg-9 -->
 
       </div>
-
-    </div>
-    <!-- /.container -->
-
-    <footer class="py-5 bg-dark">
-      <div class="container">
-        <!-- Footer -->
-        <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
-      </div>
-
       <!-- /.container -->
-    </footer>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <footer class="py-5 bg-dark">
+        <div class="container">
+          <!-- Footer -->
+          <p class="m-0 text-center text-white">&copy; 2017 Arthur Rosso e Pietro Carrara, LLC. All Rights Reserved.</p>
+        </div>
 
-    <script>
-      function comentar() {
-        $.post("/movie/{{ID}}/comment", $("#com").val())
-          .done(function (comentario) {
-            $("#comment-box")
-              .append('<p>' + comentario + '</p><small class="text-muted"> Postado por <a href="/user/{{Nome}}">{{ Nome }}</a> </small><hr>');
+        <!-- /.container -->
+      </footer>
 
-            $('#com').val('');
-          });
-      }
+      <!-- Bootstrap core JavaScript -->
+      <script src="/vendor/jquery/jquery.min.js"></script>
+      <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-      function avaliar() {
-        $.post("/movie/{{ID}}/rate", $("#aval").val()).
-        done(function(n) {
-          $.post("/movie/{{ID}}/nota", null).
-          done(function(n) {
-            $("#estrelas").text(n + " Estrelas")
-            makeStars(n)
+      <script>
+        function comentar() {
+          $.post("/movie/{{ID}}/comment", $("#com").val())
+            .done(function (comentario) {
+              $("#comment-box")
+                .append('<p>' + comentario +
+                  '</p><small class="text-muted"> Postado por <a href="/user/{{Nome}}">{{ Nome }}</a> </small><hr>');
+
+              $('#com').val('');
+            });
+        }
+
+        function avaliar() {
+          $.post("/movie/{{ID}}/rate", $("#aval").val()).
+          done(function (n) {
+            $.post("/movie/{{ID}}/nota", null).
+            done(function (n) {
+              $("#estrelas").text(n + " Estrelas")
+              makeStars(n)
+            })
           })
-        })
-      }
+        }
 
-      function adicionarTag() {
-        $.post("/movie/{{ID}}/tag-add", $("#tagAdd").val())
-        .done(
-          function(tag) {
-            if (tag != ''){
-              $("#tags").append('<a href="/tags/' + tag + '" class="list-group-item">' + tag + '</a>')
-            }
+        function adicionarTag() {
+          $.post("/movie/{{ID}}/tag-add", $("#tagAdd").val())
+            .done(
+              function (tag) {
+                if (tag != '') {
+                  $("#tags").append('<a href="/tags/' + tag + '" class="list-group-item">' + tag + '</a>')
+                }
+              }
+            )
+        }
+
+        makeStars({
+          {
+            Nota
           }
-        )
-      }
+        })
+      </script>
 
-      makeStars({{Nota}})
-    </script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </body>
 
-</body>
-
-</html>
+  </html>

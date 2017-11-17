@@ -31,19 +31,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/noticias">Notícias</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/movies/em-breve">Em breve</a>
-                    </li>
                     <li class="nav-item active">
                         {{ #logged }}
                         <a class="nav-link" href="/user/{{ user.Nome }}">{{ user.Nome }}</a>
-                        {{ /logged }} {{ ^logged }}
+                        {{ #user.IsAdmin }}
+                        <li class="nav-item">
+                          <a class="nav-link" href="/admin">Painel Admin</a>
+                        </li>
+                        {{ /user.IsAdmin }}
+                        {{ /logged }}
+                        {{ ^logged }}
                         <a class="nav-link" href="/login">Sign In/Sign Up</a> {{ /logged }}
                     </li>
                     <li class="nav-item">

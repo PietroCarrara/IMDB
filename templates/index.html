@@ -14,6 +14,13 @@
   <!-- Custom styles for this template -->
   <link href="/css/shop-homepage.css" rel="stylesheet">
 
+  <style>
+    .profile {
+      max-width: 600px;
+      max-height: 300px;
+    }
+  </style>
+
 </head>
 
 <body>
@@ -32,15 +39,6 @@
             <a class="nav-link" href="/">Home
               <span class="sr-only">(current)</span>
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/noticias">Notícias</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies/nos-cinemas">Nos cinemas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies/em-breve">Em breve</a>
           </li>
           <!-- Logado -->
           {{ #logged }}
@@ -113,13 +111,11 @@
               </div>
             </div>
           </div>
-          {{/filmes}} 
-          
-          {{ #pessoas }}
+          {{/filmes}} {{ #pessoas }}
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100">
               <a href="/pessoa/{{ ID }}">
-                <img class="card-img-top " src="{{ ProfilePic.Caminho }}" alt="">
+                <img class="card-img-top profile" src="{{ ProfilePic.Caminho }}" alt="">
               </a>
               <div class="card-body">
                 <h4 class="card-title">
